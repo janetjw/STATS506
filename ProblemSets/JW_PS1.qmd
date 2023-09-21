@@ -2,8 +2,9 @@
 title: "Problem Set 1"
 author: "Janet Wang"
 format: html
-    code-fold: true
-    code-summary: "Show the code"
+code-fold: true
+code-summary: "Show the code"
+embed-resources: true
 editor: visual
 ---
 
@@ -12,6 +13,9 @@ editor: visual
 knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/ProblemSets")
 library(dplyr)
 ```
+
+Git repository: 
+https://github.com/janetjw/STATS506/blob/main/ProblemSets/PS1.qmd
 
 ## Problem 1
 
@@ -73,7 +77,7 @@ avgtable2 <- data.frame(t(colMeans(wine[which(wine$class==2),-1])))
 avgtable3 <- data.frame(t(colMeans(wine[which(wine$class==3),-1])))
 
 avgtables <- rbind(avgtable, avgtable1, avgtable2, avgtable3)
-avgtables$Averages <- c("all rows", "class 1", "class 2", "class 3"); avgtables <- avgtables %>% relocate(averages)
+avgtables$averages <- c("all rows", "class 1", "class 2", "class 3"); avgtables <- avgtables %>% relocate(averages)
 
 rm(avgtable, avgtable1, avgtable2, avgtable3)
 avgtables
