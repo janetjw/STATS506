@@ -14,8 +14,7 @@ knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/Pro
 library(dplyr)
 ```
 
-Git repository: 
-https://github.com/janetjw/STATS506/blob/main/ProblemSets/PS1.qmd
+Git repository: https://github.com/janetjw/STATS506/blob/main/ProblemSets/PS1.qmd
 
 ## Problem 1
 
@@ -152,7 +151,6 @@ findRootPower(94143178827)
 
 > Here are two R functions to accomplish your task. The first function, determine_poker_hand, takes a vector of suits and a vector of ranks representing a 5-card hand and returns the name of the poker hand. The second function, deal_poker_round, simulates dealing a round of cards in a game of 5 card stud poker for a specified number of players. It also uses the first function to display the name of each player's hand.
 
-
 ```{r, eval = FALSE}
 # Function to determine the name of a poker hand
 determine_poker_hand <- function(suits, ranks) {
@@ -231,6 +229,7 @@ deal_poker_round(4)  # Simulate a round of 5 card stud poker with 4 players
 ### b
 
 The code above did not work, since i got an error message
+
 ```{r}
 # suits <- players[[3]]$Suit
 # ranks <- players[[3]]$Rank
@@ -314,19 +313,17 @@ deal_poker_round(4)  # Simulate a round of 5 card stud poker with 4 players
 deal_poker_round(6)  # Simulate a round of 5 card stud poker with 6 players
 deal_poker_round(3)  # Simulate a round of 5 card stud poker with 3 players
 ```
+
 It doesn't seem to be working but I have fixed the error so that it has output that makes sense (although it is wrong output).
 
 There were a lot of mistakes so I'll explain the main issues I tried to fix (so that an error message wouldn't show up):
 
-The number of ranks was incorrect since it only assigned 2 of each of the face cards to a deck. I changed the frequency and gave them numbers because the top function of determining the poker hand wouldn't recognize the characters. So Jack = 11, Queen = 12, and so on.
-The deal_poker_round() function wasn't distributing cards properly, it was giving different numbers of cards to each player so I changed it to distribute five cards. 
-Displaying each player's hand was also working incorrectly (the cat() function wasn't outputting the suits and respective ranks in the same order).
-Then the big function on top determine_poker_hand() was also causing issues. sort(ranks) wasn't giving numeric values which led to issues with figuring out what hand. So I had to add as.numeric().
-I also added an additional max(sorted_rank_counts == 2) == 2 to 2 pair and 1 pair since the original second set of "==2" was missing. 
+The number of ranks was incorrect since it only assigned 2 of each of the face cards to a deck. I changed the frequency and gave them numbers because the top function of determining the poker hand wouldn't recognize the characters. So Jack = 11, Queen = 12, and so on. The deal_poker_round() function wasn't distributing cards properly, it was giving different numbers of cards to each player so I changed it to distribute five cards. Displaying each player's hand was also working incorrectly (the cat() function wasn't outputting the suits and respective ranks in the same order). Then the big function on top determine_poker_hand() was also causing issues. sort(ranks) wasn't giving numeric values which led to issues with figuring out what hand. So I had to add as.numeric(). I also added an additional max(sorted_rank_counts == 2) == 2 to 2 pair and 1 pair since the original second set of "==2" was missing.
 
+### c
 
-### c 
 Explaining what the code is doing (some of it is already commented by ChatGPT but not much of it so I will explain the edited version).
+
 ```{r}
 # Function to determine the name of a poker hand
 determine_poker_hand <- function(suits, ranks) { #This is taking in the inputs, the respective suits and ranks of a hand
@@ -398,22 +395,23 @@ deal_poker_round <- function(num_players) {
 }
 ```
 
-### d 
+### d
 
 The code does take in and give out the correct inputs and outputs. Hands appear valid (fice cards, real cards, no duplicates).
 
-The names of the hands do seem correct -- I looked at the wikipedia page for the list of poker hands and it seems like ChatGPT coded them correctly. 
+The names of the hands do seem correct -- I looked at the wikipedia page for the list of poker hands and it seems like ChatGPT coded them correctly.
 
-There do seem to be duplicates as I requested it deal 11 hands and it does so and thus has to produce duplicate cards. I'll add a condition that does not permit the number of players to surpass the number of cards divided by 5. The error comes from the way the cards are distributed to each player -- sampling within the loop doesn't let R know that those cards are taken the next time the players get cards. 
+There do seem to be duplicates as I requested it deal 11 hands and it does so and thus has to produce duplicate cards. I'll add a condition that does not permit the number of players to surpass the number of cards divided by 5. The error comes from the way the cards are distributed to each player -- sampling within the loop doesn't let R know that those cards are taken the next time the players get cards.
 
 ```{r}
 set.seed(121667)
 deal_poker_round(11)
 ```
 
-Furthermore, the code is not accurate -- I noticed that it always outputs "high hand" when determining what hand each player has, even if a player has two of a kind. 
+Furthermore, the code is not accurate -- I noticed that it always outputs "high hand" when determining what hand each player has, even if a player has two of a kind.
 
-Below I've attempted to debug it to return the proper hands and to not permit duplicates 
+Below I've attempted to debug it to return the proper hands and to not permit duplicates
+
 ```{r}
 
 # Function to determine the name of a poker hand
@@ -489,9 +487,10 @@ deal_poker_round <- function(num_players) {
   else(return("Too Many Players!"))
   }
 ```
+
 I managed to fix the duplicates situation by dealing every fifth card to the first player, second player, in order the way normal dealing works (the first player gets the first, sixth, eleventh, sixteenth, and twenty first card, the second player gets the second, seventh, twelfth, and so on). So that's great! However, the issue of the hands being reported incorrectly is harder to fix.
 
-I managed to fix the hands by changing the shorted_rank_counts table into a data frame (R was calling on the wrong values to assess the number of pairs, and so on!) I also corrected "==4" and "==2" to be "==2" and "==1" (this original code was for identifying four of a kind and two of a kind, so those were incorrect). So now, things are looking normal and the output appears to be accurate. Hooray! 
+I managed to fix the hands by changing the shorted_rank_counts table into a data frame (R was calling on the wrong values to assess the number of pairs, and so on!) I also corrected "==4" and "==2" to be "==2" and "==1" (this original code was for identifying four of a kind and two of a kind, so those were incorrect). So now, things are looking normal and the output appears to be accurate. Hooray!
 
 ```{r}
 
@@ -501,4 +500,3 @@ deal_poker_round(5)
 deal_poker_round(6)
 
 ```
-

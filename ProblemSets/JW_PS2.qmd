@@ -11,7 +11,7 @@ editor: visual
 ```{r setup, include=FALSE}
 #knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/ProblemSets")
-library(dplyr)
+library(dplyr);library(microbenchmark);library(interactions)
 ```
 
 Git repository: https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.qmd
@@ -20,483 +20,416 @@ Git repository: https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2
 
 ### a
 
-Loading in dataset and renaming column names.
+I create for versions to play the dice game.
 
 ```{r}
-wine <- read.csv("wine/wine.data", header=FALSE)
-wine <-wine %>% 
- rename("class"=1, "Alcohol"=2, "Malic acid"=3, "Ash"=4, 
-        "Alcalinity of ash"=5, "Magnesium"=6, "Total phenols"=7,
-        "Flavanoids"=8, "Nonflavanoid phenols"=9, "Proanthocyanins"=10,
-        "Color intensity"=11, "Hue"=12,  
-        "OD280/OD315 of diluted wines"=13, "Proline"=14)
+#' Function to create dice roll game with loop over the die rolls
+#' @param x number of die rolls
+#' @return The score for `x`
+
+play_dice_a <- function(x){
+  i = 1 #initializing with one roll and zero winnings
+  winnings = 0
+  
+  while(i <= x){ #while the number of rolls is less than the specified total.
+    winnings = winnings - 2 #subtract cost of game 
+    roll <- sample(1:6,1, replace = TRUE) #roll the die
+    if(roll%%2 == 0){ #if statement, if the roll is even, add the roll total to the winnings for that round
+      winnings <- winnings+roll
+    }
+    i = i+1 #increment to increase the roll count
+  }
+  return(winnings)
+}
+
+#' Function to create dice roll game with built-in R vectorized functions
+#' @param x number of die rolls
+#' @return The score for `x`
+
+play_dice_b <- function(x)
+{
+  rolls <- sample(1:6, x, replace = TRUE) 
+  winnings = sum(rolls[which(rolls%%2 == 0)]) - length(rolls)*2 #summing up the winnings minus cost of each game (vectorizing with which and length functions )
+  return(winnings)
+}
+
+#' Function to create dice roll game with a single table
+#' @param x number of die rolls
+#' @return The score for `x`
+play_dice_c <- function(x)
+{
+  gametable <- table(sample(1:6, x, replace = TRUE)) #creating table with frequencies of rolls 1:6
+  winnings <- gametable[which(as.numeric(dimnames(gametable)[[1]]) %%2 == 0)]*
+    as.numeric(dimnames(gametable)[[1]][which((as.numeric(dimnames(gametable)[[1]])) %% 2 == 0)]) #getting number of even rolls on the evens
+  return(sum(winnings)-2*x) #summing up the winnings minus cost of each game
+} 
+
+
+#' Function to create dice roll game with an "apply" type function
+#' @param x number of die rolls
+#' @return The score for `x`
+play_dice_d <- function(x)
+{
+  gametable <- matrix(nrow = x, ncol = 1) #creating empty matrix for rolls
+  gametable[,1] <- sample(1:6, x, replace = TRUE) #rolling
+  winnings <- apply(gametable, 1, function(p){ #calculating the winnings of each roll minus cost of game by using if else function 
+    ifelse(p%%2 == 0, p-2, -2) #if even, winnings for that round are the value of the roll minus 2, otherwise, just minus 2
+  })
+  return(sum(winnings)) #summing rolls 
+}
+
 ```
 
 ### b
 
-Checking the class membership of wines
+Demonstrating that all versions work with 3 and 3000
 
 ```{r}
-xtabs(~class, wine)
+play_dice_a(3)
+play_dice_a(3000)
+
+play_dice_b(3)
+play_dice_b(3000)
+
+play_dice_c(3)
+play_dice_c(3000)
+
+play_dice_d(3)
+play_dice_d(3000)
 ```
 
-They look good!
+### c
+
+Demonstrate that versions give the same results -- I set the same seed in the function so that the numbers sampled are the same
+
+```{r}
+set.seed(121667)
+play_dice_a(3)
+
+set.seed(121667)
+play_dice_a(3000)
+
+set.seed(121667)
+play_dice_b(3)
+
+set.seed(121667)
+play_dice_b(3000)
+
+set.seed(121667)
+play_dice_c(3)
+
+set.seed(121667)
+play_dice_c(3000)
+
+set.seed(121667)
+play_dice_d(3)
+
+set.seed(121667)
+play_dice_d(3000)
+```
+
+### d
+
+Use microbenchmark to demonstrate with a low input (100) and a large input (10000)
+
+```{r}
+microbenchmark(play_dice_a(100), play_dice_b(100), play_dice_c(100), play_dice_d(100))
+microbenchmark(play_dice_a(10000), play_dice_b(10000), play_dice_c(10000), play_dice_d(10000))
+```
+
+We see that the function for playing dice with the vectorized functions performs fastest, then the table() version, the apply() version, and lastly, the loop version. I get similar results in that order for the low and large input.
+
+### e
+
+Assess whether this is a fair game with evidence from a Monte Carlo simulation. I run a Monte Carlo simulation to calculate the mean winnings over many games (I also get a random draw for number of rolls for each game). If the mean is greater than or equal to zero, I would say this is a fair game. If less than zero, I would say this is an unfair game.
+
+```{r}
+
+n <- 5000 #running 5000 simulations
+monte_winnings_a <- NULL
+monte_winnings_b <- NULL
+monte_winnings_c <- NULL
+monte_winnings_d <- NULL
+
+set.seed(1)
+
+for(i in 1:n){
+  x <- sample(1:10000, 1)
+  monte_winnings_a[i] <- play_dice_a(x)
+  monte_winnings_b[i] <- play_dice_b(x)
+  monte_winnings_c[i] <- play_dice_c(x)
+  monte_winnings_d[i] <- play_dice_d(x)
+}
+
+mean(monte_winnings_a) + (qt(0.975,df = n-1)*sd(monte_winnings_a)/sqrt(n))
+mean(monte_winnings_a) - (qt(0.975,df = n-1)*sd(monte_winnings_a)/sqrt(n))
+
+mean(monte_winnings_b) + (qt(0.975,df = n-1)*sd(monte_winnings_b)/sqrt(n))
+mean(monte_winnings_b) - (qt(0.975,df = n-1)*sd(monte_winnings_b)/sqrt(n))
+                                               
+mean(monte_winnings_c) + (qt(0.975,df = n-1)*sd(monte_winnings_c)/sqrt(n))
+mean(monte_winnings_c) - (qt(0.975,df = n-1)*sd(monte_winnings_c)/sqrt(n))
+
+mean(monte_winnings_d) + (qt(0.975,df = n-1)*sd(monte_winnings_d)/sqrt(n))
+mean(monte_winnings_d) - (qt(0.975,df = n-1)*sd(monte_winnings_d)/sqrt(n))
+
+hist(monte_winnings_a); hist(monte_winnings_b); hist(monte_winnings_c); hist(monte_winnings_d)
+
+```
+
+Given the 95% confidence intervals contain zero and the histograms of winnings distributions center around zero, I'd say this game is pretty fair.
+
+## Problem 2
+
+### a
+
+Renaming columns
+
+```{r}
+cars <- read.csv("cars.csv")
+colnames(cars) <- c("height", "length", "width", "driveline", "enginetype", "hybrid", "forwardgears", "transmission", "city", 
+                    "fueltype", "highway", "classification", "id", "make", "modelyear", "year", "horsepower", "torque")
+```
+
+### b
+
+Restricting data to cars whose Fuel Type is "Gasoline".
+
+```{r}
+cars <- cars[which(cars$fueltype == "Gasoline"), ]
+```
 
 ### c
 
 ```{r}
-wine[which(wine$Alcohol == max(wine$Alcohol)), "class"]
-
-wine[which(wine$Alcohol == min(wine$Alcohol)), "class"]
-
-sum(wine$Magnesium > 114)
-
-sum(wine[which(wine$class == 1),]$Magnesium > 114)
-sum(wine[which(wine$class == 2),]$Magnesium > 114)
-sum(wine[which(wine$class == 3),]$Magnesium > 114)
-
+cars$year <- as.factor(cars$year)
+model1 <- lm(highway ~ horsepower + torque + height + length + width + year, data = cars)
+summary(model1)
 ```
 
-The wine with the highest alcohol content belongs to which class? It belongs to class 1.
-
-The wine with the lowest alcohol content belongs to which class? It belongs to class 2.
-
-German beers have, on average, 114 mg/l of magnesium. How many of these wines have higher levels of magnesium than that? (You may assume that the magnesium reported in the data is in the same units.) 26 wines.
-
-Within each class, how many wines have higher levels of magnesium than average German beer? Class 1 - 15 wines, class 2 - 6 wines, class 3 - 5 wines.
+The coefficient for horsepower is 0.0163556 and the p value is 7.96e-13. This means there is a statistically significant, positive relationship between horsepower and highway mpg. The coefficient is small in magnitude, and means that for one unit increase in horsepower (745.7 watts), mpg on highways increases by 0.0163556 (controlling for other variables in the model).
 
 ### d
 
-Create a table identifying average value of each variable and one row per class with class averages.
-
 ```{r}
-avgtable <- data.frame(t(colMeans(wine[,-1])))
-avgtable1 <- data.frame(t(colMeans(wine[which(wine$class==1),-1])))
-avgtable2 <- data.frame(t(colMeans(wine[which(wine$class==2),-1])))
-avgtable3 <- data.frame(t(colMeans(wine[which(wine$class==3),-1])))
-
-avgtables <- rbind(avgtable, avgtable1, avgtable2, avgtable3)
-avgtables$averages <- c("all rows", "class 1", "class 2", "class 3"); avgtables <- avgtables %>% relocate(averages)
-
-rm(avgtable, avgtable1, avgtable2, avgtable3)
-avgtables
+model2 <- lm(highway ~ horsepower*torque + height + length + width + year, data = cars)
+summary(model2)
+summary(cars$torque)
+table(cars$year)
+interact_plot(model2, pred = horsepower, modx = torque, modx.values = c(177.0, 267.2, 332.0), at = list(year="2011"))
 ```
+
+I chose three different values of torque based on the 1st quartile, mean, and third quartile: 177.0, 267.2, 332.0. I select year 2011 since that year has the most observations. We see that cars with higher levels of torque have a stronger relationship between horsepower and mpg on the highway.
 
 ### e
 
-Does Ash differ across the three classes?
+Recall that beta hat is the inverse of x transposed times x, times x transposed, times y. Multiplication here is matrix multiplication.
 
 ```{r}
-t.test(wine[which(wine$class==1), "Ash"], wine[which(wine$class==2), "Ash"])
-t.test(wine[which(wine$class==3), "Ash"], wine[which(wine$class==2), "Ash"])
-t.test(wine[which(wine$class==1), "Ash"], wine[which(wine$class==3), "Ash"])
-
+x <- model.matrix( ~ horsepower*torque + height + length + width + year, data = cars)
+betahat <- solve(t(x) %*% x) %*% t(x) %*% cars$highway
+betahat[2,1]
+coef(model2)[2]
 ```
 
-I hypothesis that there is not a statistically significant difference in means between 1) class 1 Ash levels and class 2 Ash levels 2) class 3 Ash levels and class 2 Ash levels 3) class 1 Ash levels and class 3 Ash levels
-
-The results of the t tests indicate I should reject hypothesis 1 (there is no statistically significant difference in mean Ash levels for class 1 and class 2) and hypothesis 2 (there is no statistically significant difference in mean Ash levels for class 3 and class 2) but not hypothesis 3 (there is no statistically significant difference in mean Ash levels for class 1 and class 3).
-
-There could be something very different occurring with class 2 Ash levels given that i rejected hypotheses 1 and 2 but not 3.
-
-## Problem 2
-
-### a Building the function
-
-```{r}
-isPerfectPower <- function(number, power){
-  isPerfectPower_list <- list()
-  isPerfectPower_list$isPerfect <- ifelse(number^(1/power)%%1 > 0, FALSE, TRUE)
-  isPerfectPower_list$root <- round(number^(1/power), digits = 3)
-  return(isPerfectPower_list)
-  #print(isPerfectPower_list$isPerfect)
-  #print(isPerfectPower_list$root)  
-}
-```
-
-### b Demonstrating the function works
-
-```{r}
-findRootPower <- function(n){
-  
-  answer <- isPerfectPower(n,100000)$isPerfect
-  p <- 1
-  
-  while(answer == FALSE & p < sqrt(n)){
-    p <- p + 1
-    answer <- isPerfectPower(n,p)$isPerfect
-  }
-    
-  if(answer == TRUE){
-    print(paste(n, " = ", isPerfectPower(n,p)$root, "^", p, sep = ""))
-  } 
-  if(answer == FALSE){
-    print(paste(n, "is not a perfect power!"))
-  }    
-  
-}
-
-findRootPower(27)
-findRootPower(13060694016)
-findRootPower(7776)
-findRootPower(170859375)
-findRootPower(58247422)
-findRootPower(94143178827)
-
-```
+We get the same coefficient from the linear model, 0.01635563!
+I get the same coefficient.
 
 ## Problem 3
 
 ### a
 
-> Here are two R functions to accomplish your task. The first function, determine_poker_hand, takes a vector of suits and a vector of ranks representing a 5-card hand and returns the name of the poker hand. The second function, deal_poker_round, simulates dealing a round of cards in a game of 5 card stud poker for a specified number of players. It also uses the first function to display the name of each player's hand.
+``` stata
+. cd "/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/"
+/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets
 
-```{r, eval = FALSE}
-# Function to determine the name of a poker hand
-determine_poker_hand <- function(suits, ranks) {
-  # Helper function to count the frequency of each rank
-  count_ranks <- function(ranks) {
-    rank_counts <- table(ranks)
-    rank_counts <- sort(rank_counts, decreasing = TRUE)
-    return(rank_counts)
-  }
-  
-  # Sort the ranks in descending order of frequency
-  sorted_rank_counts <- count_ranks(ranks)
-  
-  # Check for specific poker hands
-  if (length(unique(suits)) == 1) {
-    if (all(diff(sort(ranks)) == 1)) {
-      return("Straight Flush")
-    }
-    return("Flush")
-  }
-  if (all(diff(sort(ranks)) == 1)) {
-    return("Straight")
-  }
-  if (max(sorted_rank_counts) == 4) {
-    return("Four of a Kind")
-  }
-  if (max(sorted_rank_counts) == 3 && sum(sorted_rank_counts >= 2) == 2) {
-    return("Full House")
-  }
-  if (max(sorted_rank_counts) == 3) {
-    return("Three of a Kind")
-  }
-  if (sum(sorted_rank_counts == 2) == 4) {
-    return("Two Pair")
-  }
-  if (max(sorted_rank_counts) == 2) {
-    return("One Pair")
-  }
-  
-  return("High Card")
-}
+. import delimited "cars.csv"
+(encoding automatically selected: ISO-8859-1)
+(18 vars, 5,076 obs)
 
-# Function to simulate dealing a round of 5 card stud poker
-deal_poker_round <- function(num_players) {
-  # Define the deck of cards
-  suits <- rep(c("Hearts", "Diamonds", "Clubs", "Spades"), each = 13)
-  ranks <- rep(2:10, times = 4)
-  ranks <- c("Jack", "Queen", "King", "Ace", ranks)
-  
-  # Shuffle the deck
-  deck <- data.frame(Suit = suits, Rank = ranks)
-  deck <- deck[sample(nrow(deck)), ]
-  
-  # Deal 5 cards to each player
-  players <- vector("list", length = num_players)
-  for (i in 1:num_players) {
-    players[[i]] <- deck[(i - 1) * 5 + 1:(i * 5), ]
-  }
-  
-  # Determine and display each player's hand
-  for (i in 1:num_players) {
-    cat("Player", i, "Hand:\n")
-    cat(players[[i]]$Rank, "of", players[[i]]$Suit, "\n")
-    hand_name <- determine_poker_hand(players[[i]]$Suit, players[[i]]$Rank)
-    cat("Hand Name:", hand_name, "\n\n")
-  }
-}
-
-# Example usage:
-set.seed(123)  # for reproducibility
-deal_poker_round(4)  # Simulate a round of 5 card stud poker with 4 players
+. 
+. rename (*) (height length width driveline enginetype hybrid forwardgears transmission city fueltype highway classification id make modelyear year horsepower torque)
 ```
-
-> You can call the deal_poker_round function with the number of players you want to simulate in a round of poker. It will display each player's hand and the name of their hand as determined by the determine_poker_hand function.
 
 ### b
 
-The code above did not work, since i got an error message
-
-```{r}
-# suits <- players[[3]]$Suit
-# ranks <- players[[3]]$Rank
-
-# Function to determine the name of a poker hand
-determine_poker_hand <- function(suits, ranks) {
-  # Helper function to count the frequency of each rank
-  count_ranks <- function(ranks) {
-    rank_counts <- table(ranks)
-    rank_counts <- sort(rank_counts, decreasing = TRUE)
-    return(rank_counts)
-  }
-  
-  # Sort the ranks in descending order of frequency
-  sorted_rank_counts <- count_ranks(ranks)
-  
-  # Check for specific poker hands
-  if (length(unique(suits)) == 1) {
-    if (all(diff(as.numeric(sort(ranks))) == 1)) {
-      return("Straight Flush")
-    }
-    return("Flush")
-  }
-  if (all(diff(as.numeric(sort(ranks))) == 1)) {
-    return("Straight")
-  }
-  if (max(sorted_rank_counts) == 4) {
-    return("Four of a Kind")
-  }
-  if (max(sorted_rank_counts) == 3 && sum(sorted_rank_counts >= 2) == 2) {
-    return("Full House")
-  }
-  if (max(sorted_rank_counts) == 3) {
-    return("Three of a Kind")
-  }
-  if (sum(sorted_rank_counts == 2) == 4) {
-    return("Two Pair")
-  }
-  if (max(sorted_rank_counts == 2) == 2) {
-    return("One Pair")
-  }
-  
-  return("High Card")
-}
-
-# Function to simulate dealing a round of 5 card stud poker
-deal_poker_round <- function(num_players) {
-  # Define the deck of cards
-  suits <- rep(c("Hearts", "Diamonds", "Clubs", "Spades"), each = 13)
-  ranks <- rep(2:14, times = 4)
-
-  # Shuffle the deck
-  deck <- data.frame(Suit = suits, Rank = ranks)
-  deck <- deck[sample(nrow(deck)), ]
-  
-  # Deal 5 cards to each player
-  players <- vector("list", length = num_players)
-  for (i in 1:num_players) {
-    #players[[i]] <- deck[(i - 1) * 5 + 1:(i * 5), ]
-    rownum <- sample(nrow(deck), size = 5, replace = FALSE)
-    players[[i]] <- deck[rownum, ]
-  }
-  
-  # Determine and display each player's hand
-  for (i in 1:num_players) {
-    cat("Player", i, "Hand:\n")
-    cat(players[[i]]$Suit, "\n")
-    cat(players[[i]]$Rank, "\n")
-    hand_name <- determine_poker_hand(players[[i]]$Suit, players[[i]]$Rank)
-    cat("Hand Name:", hand_name, "\n\n")
-  }
-}
-
-    #cat(players[[i]]$Rank, "of", players[[i]]$Suit, "\n")
-    #print(players[[i]])
-# Example usage:
-set.seed(123)  # for reproducibility
-deal_poker_round(4)  # Simulate a round of 5 card stud poker with 4 players
-
-#Now trying my own thing
-deal_poker_round(6)  # Simulate a round of 5 card stud poker with 6 players
-deal_poker_round(3)  # Simulate a round of 5 card stud poker with 3 players
+``` stata
+. keep if fueltype == "Gasoline"
+(485 observations deleted)
 ```
-
-It doesn't seem to be working but I have fixed the error so that it has output that makes sense (although it is wrong output).
-
-There were a lot of mistakes so I'll explain the main issues I tried to fix (so that an error message wouldn't show up):
-
-The number of ranks was incorrect since it only assigned 2 of each of the face cards to a deck. I changed the frequency and gave them numbers because the top function of determining the poker hand wouldn't recognize the characters. So Jack = 11, Queen = 12, and so on. The deal_poker_round() function wasn't distributing cards properly, it was giving different numbers of cards to each player so I changed it to distribute five cards. Displaying each player's hand was also working incorrectly (the cat() function wasn't outputting the suits and respective ranks in the same order). Then the big function on top determine_poker_hand() was also causing issues. sort(ranks) wasn't giving numeric values which led to issues with figuring out what hand. So I had to add as.numeric(). I also added an additional max(sorted_rank_counts == 2) == 2 to 2 pair and 1 pair since the original second set of "==2" was missing.
 
 ### c
 
-Explaining what the code is doing (some of it is already commented by ChatGPT but not much of it so I will explain the edited version).
+``` stata
+. reg highway horsepower torque height length width year
 
-```{r}
-# Function to determine the name of a poker hand
-determine_poker_hand <- function(suits, ranks) { #This is taking in the inputs, the respective suits and ranks of a hand
-  # Helper function to count the frequency of each rank
-  count_ranks <- function(ranks) { #this function is counting the number of times a rank appears in the hand and outputs the order
-    rank_counts <- table(ranks)
-    rank_counts <- sort(rank_counts, decreasing = TRUE)
-    return(rank_counts)
-  }
-  
-  # Sort the ranks in descending order of frequency
-  sorted_rank_counts <- count_ranks(ranks) #this saves the frequencies 
-  
-  # Check for specific poker hands # now we are checking the hand for specific things (if none of these appear we simply have a high hand, or a hand where there is a highest singular card)
-  if (length(unique(suits)) == 1) { 
-    if (all(diff(as.numeric(sort(ranks))) == 1)) { #if all the cards are the same suit, then we have a flush. straight flush is when
-      return("Straight Flush") #they are all in a sequence (thus we're cheking if the ranks all differ by 1)
-    }
-    return("Flush")
-  }
-  if (all(diff(as.numeric(sort(ranks))) == 1)) { #if ranks all differ by 1, we have a straight hand 
-    return("Straight")
-  }
-  if (max(sorted_rank_counts) == 4) { #if we have a rank that shows up four times (e.g. a Jack in every suit), we have a four of a kind
-    return("Four of a Kind")
-  }
-  if (max(sorted_rank_counts) == 3 && sum(sorted_rank_counts >= 2) == 2) { #this is testing if we have a three of a kind and 
-    return("Full House") #if we have two cards of the same rank
-  }
-  if (max(sorted_rank_counts) == 3) { #this means we have three of the same rank
-    return("Three of a Kind")
-  }
-  if (sum(sorted_rank_counts == 2) == 4) { #this means we have two sets of matching ranks (e.g. two 4s and two Queens)
-    return("Two Pair")
-  }
-  if (max(sorted_rank_counts == 2) == 2) { #this mean we have one set of matching ranks
-    return("One Pair")
-  }
-  
-  return("High Card")
-}
+      Source |       SS           df       MS      Number of obs   =     4,591
+-------------+----------------------------------   F(6, 4584)      =    549.28
+       Model |  69889.2409         6  11648.2068   Prob > F        =    0.0000
+    Residual |  97209.7267     4,584  21.2063104   R-squared       =    0.4183
+-------------+----------------------------------   Adj R-squared   =    0.4175
+       Total |  167098.968     4,590  36.4050038   Root MSE        =     4.605
 
-# Function to simulate dealing a round of 5 card stud poker
-deal_poker_round <- function(num_players) {
-  # Define the deck of cards
-  suits <- rep(c("Hearts", "Diamonds", "Clubs", "Spades"), each = 13) #creating the suits because each suit has 13 cards
-  ranks <- rep(2:14, times = 4) #creating the ranks (I had to change this from the original designations with Jack, Queen, etc. because I didn't think R would be able to differentiate the names versus values when it came to reporting the type of hand a player had)
+------------------------------------------------------------------------------
+     highway | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+  horsepower |   .0165738   .0022769     7.28   0.000     .0121101    .0210376
+      torque |  -.0510155   .0022019   -23.17   0.000    -.0553323   -.0466987
+      height |   .0098205   .0011235     8.74   0.000     .0076179    .0120231
+      length |   .0016162   .0008831     1.83   0.067    -.0001151    .0033475
+       width |  -.0004419   .0009041    -0.49   0.625    -.0022143    .0013306
+        year |   .8145434   .0864317     9.42   0.000     .6450956    .9839912
+       _cons |  -1605.366   173.7969    -9.24   0.000    -1946.092   -1264.641
+------------------------------------------------------------------------------
 
-  # Shuffle the deck
-  deck <- data.frame(Suit = suits, Rank = ranks) #creating the deck
-  deck <- deck[sample(nrow(deck)), ] #using sample to switch up the rows of the deck dataframe and thus shuffle the deck 
-  
-  # Deal 5 cards to each player
-  players <- vector("list", length = num_players) #creating a list of players depending on the number
-  for (i in 1:num_players) {
-    #players[[i]] <- deck[(i - 1) * 5 + 1:(i * 5), ] #this didn't make sense to me and kept distributing the wrong number of cards so I commented it out 
-    rownum <- sample(nrow(deck), size = 5, replace = FALSE) #this is sampling without replacement 5 cards each time 
-    players[[i]] <- deck[rownum, ] #giving the player the five cards 
-  }
-  
-  # Determine and display each player's hand
-  for (i in 1:num_players) {
-    cat("Player", i, "Hand:\n") 
-    cat(players[[i]]$Suit, "\n") #printing out the suit of each hand 
-    cat(players[[i]]$Rank, "\n") #printing out the respective rank of each hand 
-    hand_name <- determine_poker_hand(players[[i]]$Suit, players[[i]]$Rank) #using the top function to determine the hand
-    cat("Hand Name:", hand_name, "\n\n") #outputting the function results for the type of hand 
-  }
-}
+. 
 ```
+
+Stata reports that the coefficient for horsepower is .0165738 and the p value is 0.000. There is a statistically significant, positive relationship between horsepower and highway mpg. For one unit increase in horsepower (745.7 watts), mpg on highways increases by .0165738 (ceteris paribus).
 
 ### d
 
-The code does take in and give out the correct inputs and outputs. Hands appear valid (fice cards, real cards, no duplicates).
+``` stata
+. reg highway c.horsepower##c.torque height length width i.year
 
-The names of the hands do seem correct -- I looked at the wikipedia page for the list of poker hands and it seems like ChatGPT coded them correctly.
+      Source |       SS           df       MS      Number of obs   =     4,591
+-------------+----------------------------------   F(9, 4581)      =    480.07
+       Model |  81105.8715         9  9011.76351   Prob > F        =    0.0000
+    Residual |   85993.096     4,581  18.7716865   R-squared       =    0.4854
+-------------+----------------------------------   Adj R-squared   =    0.4844
+       Total |  167098.968     4,590  36.4050038   Root MSE        =    4.3326
 
-There do seem to be duplicates as I requested it deal 11 hands and it does so and thus has to produce duplicate cards. I'll add a condition that does not permit the number of players to surpass the number of cards divided by 5. The error comes from the way the cards are distributed to each player -- sampling within the loop doesn't let R know that those cards are taken the next time the players get cards.
+---------------------------------------------------------------------------------------
+              highway | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+----------------------+----------------------------------------------------------------
+           horsepower |  -.0166633   .0025388    -6.56   0.000    -.0216406    -.011686
+               torque |  -.0860593   .0025333   -33.97   0.000    -.0910257   -.0810928
+                      |
+c.horsepower#c.torque |   .0001124   4.63e-06    24.28   0.000     .0001033    .0001214
+                      |
+               height |   .0065604   .0010696     6.13   0.000     .0044634    .0086573
+               length |   .0017767   .0008318     2.14   0.033     .0001459    .0034075
+                width |  -.0011694   .0008521    -1.37   0.170      -.00284    .0005011
+                      |
+                 year |
+                2010  |  -.5627858   .6371716    -0.88   0.377    -1.811949    .6863777
+                2011  |   .0725356   .6361142     0.11   0.909    -1.174555    1.319626
+                2012  |   1.197033   .6411085     1.87   0.062    -.0598488    2.453915
+                      |
+                _cons |   42.18795   .7930274    53.20   0.000     40.63323    43.74266
+---------------------------------------------------------------------------------------
 
-```{r}
-set.seed(121667)
-deal_poker_round(11)
+. 
+. codebook torque
+
+----------------------------------------------------------------------------------------------
+torque                                             Engine Information.Engine Statistics.Torque
+----------------------------------------------------------------------------------------------
+
+                  Type: Numeric (int)
+
+                 Range: [98,774]                      Units: 1
+         Unique values: 214                       Missing .: 0/4,591
+
+                  Mean:  267.22
+             Std. dev.: 101.327
+
+           Percentiles:     10%       25%       50%       75%       90%
+                            148       177       257       332       410
+
+. 
+. margins, dydx(c.horsepower) at(torque = (177 257 332) year = 2011)
+
+Average marginal effects                                 Number of obs = 4,591
+Model VCE: OLS
+
+Expression: Linear prediction, predict()
+dy/dx wrt:  horsepower
+1._at: torque =  177
+       year   = 2011
+2._at: torque =  257
+       year   = 2011
+3._at: torque =  332
+       year   = 2011
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+horsepower   |
+         _at |
+          1  |   .0032238   .0022109     1.46   0.145    -.0011106    .0075583
+          2  |   .0122123   .0021505     5.68   0.000     .0079963    .0164284
+          3  |   .0206391    .002151     9.60   0.000     .0164222     .024856
+------------------------------------------------------------------------------
+
+. 
+. marginsplot
+
+Variables that uniquely identify margins: torque
+
+. graph export "/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/JW_PS2sta
+> ta.png", as(png) name("Graph")
+file /Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/JW_PS2stata.png
+    saved as PNG format
 ```
 
-Furthermore, the code is not accurate -- I noticed that it always outputs "high hand" when determining what hand each player has, even if a player has two of a kind.
+![Margins plot](JW_PS2stata.png "Margins plot")
 
-Below I've attempted to debug it to return the proper hands and to not permit duplicates
+After running the model, I use the first, second, and third quartile values of torque as representative values for the margins plot. Since hosepower is continuous, I calculate the slope for the relationship for horsepower and mpg on the highway at three representative values of torque, controlling for the other variables in the model. 
 
-```{r}
+### e
 
-# Function to determine the name of a poker hand
-determine_poker_hand <- function(suits, ranks) {
-  # Helper function to count the frequency of each rank
-  count_ranks <- function(ranks) {
-    rank_counts <- table(ranks)
-    rank_counts <- sort(rank_counts, decreasing = TRUE)
-    return(rank_counts)
-  }
-  
-  # Sort the ranks in descending order of frequency
-  sorted_rank_counts <- count_ranks(ranks)
-  sorted_rank_counts <- as.data.frame(sorted_rank_counts)
-  
-  # Check for specific poker hands
-  if (length(unique(suits)) == 1) {
-    if (all(diff(as.numeric(sort(ranks))) == 1)) {
-      return("Straight Flush")
-    }
-    return("Flush")
-  }
-  if (all(diff(as.numeric(sort(ranks))) == 1)) {
-    return("Straight")
-  }
-  if (max(sorted_rank_counts$Freq) == 4) {
-    return("Four of a Kind")
-  }
-  if (max(sorted_rank_counts$Freq) == 3 && sum(sorted_rank_counts$Freq >= 2) == 2) {
-    return("Full House")
-  }
-  if (max(sorted_rank_counts$Freq) == 3) {
-    return("Three of a Kind")
-  }
-  if (sum(sorted_rank_counts$Freq == 2) == 2) {
-    return("Two Pair")
-  }
-  if (max(sorted_rank_counts$Freq == 2) == 1) {
-    return("One Pair")
-  }
-  
-  return("High Card")
-}
+``` stata
+. gen year2010 = 0
 
-# Function to simulate dealing a round of 5 card stud poker
-deal_poker_round <- function(num_players) {
-  if(num_players <= 10){
-  # Define the deck of cards
-  suits <- rep(c("Hearts", "Diamonds", "Clubs", "Spades"), each = 13)
-  ranks <- rep(2:14, times = 4)
+. replace year2010 =1 if year == 2010
+(1,633 real changes made)
 
-  # Shuffle the deck
-  deck <- data.frame(Suit = suits, Rank = ranks)
-  deck <- deck[sample(nrow(deck)), ]
-  
-  # Deal 5 cards to each player
-  players <- vector("list", length = num_players)
-  for (i in 1:num_players) {
-    players[[i]] <- deck[c(i, i+5, i+10, i+15, i+20), ]
-    rownum <- sample(nrow(deck), size = 5, replace = FALSE)
-    #players[[i]] <- deck[rownum, ]
-  }
-  
-  # Determine and display each player's hand
-  for (i in 1:num_players) {
-    cat("Player", i, "Hand:\n")
-    cat(players[[i]]$Suit, "\n")
-    cat(players[[i]]$Rank, "\n")
-    hand_name <- determine_poker_hand(players[[i]]$Suit, players[[i]]$Rank)
-    cat("Hand Name:", hand_name, "\n\n")
-  }
-}
-  else(return("Too Many Players!"))
-  }
-```
+. gen year2011 = 0
 
-I managed to fix the duplicates situation by dealing every fifth card to the first player, second player, in order the way normal dealing works (the first player gets the first, sixth, eleventh, sixteenth, and twenty first card, the second player gets the second, seventh, twelfth, and so on). So that's great! However, the issue of the hands being reported incorrectly is harder to fix.
+. replace year2011  =1 if year == 2011
+(1,794 real changes made)
 
-I managed to fix the hands by changing the shorted_rank_counts table into a data frame (R was calling on the wrong values to assess the number of pairs, and so on!) I also corrected "==4" and "==2" to be "==2" and "==1" (this original code was for identifying four of a kind and two of a kind, so those were incorrect). So now, things are looking normal and the output appears to be accurate. Hooray!
+. gen year2012 = 0
 
-```{r}
+. replace year2012  =1 if year == 2012
+(1,116 real changes made)
 
-set.seed(121667)
-deal_poker_round(11)
-deal_poker_round(5)
-deal_poker_round(6)
+. gen horsepowerxtorque = horsepower * torque
+
+. gen inter = 1
+
+. 
+. mata
+------------------------------------------------- mata (type end to exit) --------------------
+: 
+: X = st_data(.,("inter", "horsepower", "torque", "height", "length", "width", "year2010", "ye
+> ar2011", "year2012", "horsepowerxtorque"))
+
+: 
+: y = st_data(.,("highway"))
+
+: 
+: 
+: invsym(X'*X)*X'*y
+                   1
+     +----------------+
+   1 |   42.18794787  |
+   2 |  -.0166633227  |
+   3 |  -.0860592704  |
+   4 |   .0065603903  |
+   5 |   .0017767232  |
+   6 |  -.0011694485  |
+   7 |   -.562785777  |
+   8 |   .0725356431  |
+   9 |   1.197032999  |
+  10 |   .0001123567  |
+     +----------------+
+
+: 
+: end
+----------------------------------------------------------------------------------------------
 
 ```
+We see that the coefficient for horsepower, -.0166633227, is the same when I manually calculate it using Mata. 
