@@ -14,7 +14,11 @@ knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/Pro
 library(dplyr);library(microbenchmark);library(interactions)
 ```
 
-Git repository: https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.qmd
+Git repository
+
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.qmd>
+
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.html>
 
 ## Problem 1
 
@@ -154,7 +158,7 @@ monte_winnings_d <- NULL
 set.seed(1)
 
 for(i in 1:n){
-  x <- sample(1:10000, 1)
+  x <- sample(1:1000, 1)
   monte_winnings_a[i] <- play_dice_a(x)
   monte_winnings_b[i] <- play_dice_b(x)
   monte_winnings_c[i] <- play_dice_c(x)
@@ -219,7 +223,7 @@ table(cars$year)
 interact_plot(model2, pred = horsepower, modx = torque, modx.values = c(177.0, 267.2, 332.0), at = list(year="2011"))
 ```
 
-I chose three different values of torque based on the 1st quartile, mean, and third quartile: 177.0, 267.2, 332.0. I select year 2011 since that year has the most observations. We see that cars with higher levels of torque have a stronger relationship between horsepower and mpg on the highway.
+I chose three different values of torque based on the 1st quartile, mean, and third quartile: 177.0, 267.2, 332.0. I select data from year 2011 since that year has the most observations of any year in the data. We see that cars with higher levels of torque have a stronger relationship between horsepower and mpg on the highway.
 
 ### e
 
@@ -232,8 +236,7 @@ betahat[2,1]
 coef(model2)[2]
 ```
 
-We get the same coefficient from the linear model, 0.01635563!
-I get the same coefficient.
+We get the same coefficient from the linear model, 0.01635563! I get the same coefficient.
 
 ## Problem 3
 
@@ -337,48 +340,95 @@ torque                                             Engine Information.Engine Sta
            Percentiles:     10%       25%       50%       75%       90%
                             148       177       257       332       410
 
-. 
-. margins, dydx(c.horsepower) at(torque = (177 257 332) year = 2011)
+. codebook horsepower
 
-Average marginal effects                                 Number of obs = 4,591
+----------------------------------------------------------------------------------------------
+horsepower                                     Engine Information.Engine Statistics.Horsepower
+----------------------------------------------------------------------------------------------
+
+                  Type: Numeric (int)
+
+                 Range: [100,638]                     Units: 1
+         Unique values: 213                       Missing .: 0/4,591
+
+                  Mean: 267.466
+             Std. dev.:  97.432
+
+           Percentiles:     10%       25%       50%       75%       90%
+                            156       185       263       317       400
+
+. 
+. margins, at(horsepower=( 200 400 600 ) torque = (177 267.22 332) year = 2011)
+
+Predictive margins                                       Number of obs = 4,591
 Model VCE: OLS
 
 Expression: Linear prediction, predict()
-dy/dx wrt:  horsepower
-1._at: torque =  177
-       year   = 2011
-2._at: torque =  257
-       year   = 2011
-3._at: torque =  332
-       year   = 2011
+1._at: horsepower =    200
+       torque     =    177
+       year       =   2011
+2._at: horsepower =    200
+       torque     = 267.22
+       year       =   2011
+3._at: horsepower =    200
+       torque     =    332
+       year       =   2011
+4._at: horsepower =    400
+       torque     =    177
+       year       =   2011
+5._at: horsepower =    400
+       torque     = 267.22
+       year       =   2011
+6._at: horsepower =    400
+       torque     =    332
+       year       =   2011
+7._at: horsepower =    600
+       torque     =    177
+       year       =   2011
+8._at: horsepower =    600
+       torque     = 267.22
+       year       =   2011
+9._at: horsepower =    600
+       torque     =    332
+       year       =   2011
 
 ------------------------------------------------------------------------------
              |            Delta-method
-             |      dy/dx   std. err.      t    P>|t|     [95% conf. interval]
+             |     Margin   std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-horsepower   |
          _at |
-          1  |   .0032238   .0022109     1.46   0.145    -.0011106    .0075583
-          2  |   .0122123   .0021505     5.68   0.000     .0079963    .0164284
-          3  |   .0206391    .002151     9.60   0.000     .0164222     .024856
+          1  |   28.70501   .1250433   229.56   0.000     28.45987    28.95016
+          2  |   22.96811   .1803012   127.39   0.000     22.61463    23.32159
+          3  |   18.84888   .3010316    62.61   0.000     18.25872    19.43905
+          4  |   29.34977   .4871132    60.25   0.000      28.3948    30.30475
+          5  |   25.64023   .3082573    83.18   0.000      25.0359    26.24457
+          6  |    22.9767   .1940175   118.43   0.000     22.59633    23.35707
+          7  |   29.99454   .9219402    32.53   0.000     28.18709    31.80198
+          8  |   28.31236    .725531    39.02   0.000     26.88997    29.73475
+          9  |   27.10452   .5956487    45.50   0.000     25.93676    28.27228
 ------------------------------------------------------------------------------
 
 . 
 . marginsplot
 
-Variables that uniquely identify margins: torque
+Variables that uniquely identify margins: horsepower torque
 
 . graph export "/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/JW_PS2sta
-> ta.png", as(png) name("Graph")
+> ta.png", as(png) name("Graph") replace
 file /Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/JW_PS2stata.png
     saved as PNG format
 ```
 
-![Margins plot](JW_PS2stata.png "Margins plot")
+![M
+argins plot](JW_PS2stata.png "Margins plot")
 
-After running the model, I use the first, second, and third quartile values of torque as representative values for the margins plot. Since hosepower is continuous, I calculate the slope for the relationship for horsepower and mpg on the highway at three representative values of torque, controlling for the other variables in the model. 
+After running the model, I use the first quartile, mean, and third quartile values of torque as representative values for the margins plot. I select the values of 200, 400, and 600, since horsepower is also continuous and these are the values that are included in the x axis of horsepower in the interaction plot from R. 
+
+This interaction plot displays predictive margins for the relationship between mpg on highway and horsepower at different values of torque in 2011, while controlling for the other variables in the model. It looks like the interaction plot I created in R. 
 
 ### e
+
+I used [this manual](https://www.schmidheiny.name/teaching/statamata.pdf) to help me with calculating the inverse matrix:
 
 ``` stata
 . gen year2010 = 0
@@ -430,6 +480,6 @@ After running the model, I use the first, second, and third quartile values of t
 : 
 : end
 ----------------------------------------------------------------------------------------------
-
 ```
-We see that the coefficient for horsepower, -.0166633227, is the same when I manually calculate it using Mata. 
+
+We see that the coefficient for horsepower, -.0166633227, is the same when I manually calculate it using Mata.
