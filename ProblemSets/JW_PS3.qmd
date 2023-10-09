@@ -1,0 +1,438 @@
+---
+title: "Problem Set 3"
+author: "Janet Wang"
+format: html
+code-fold: true
+code-summary: "Show the code"
+embed-resources: true
+editor: visual
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/ProblemSets")
+library(dplyr)
+library(DBI)
+```
+
+Git repository
+
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.qmd>
+
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.html>
+
+## Problem 1
+
+I referenced these stata manuals for importing SAS data and merging in stata: <https://www.stata.com/manuals13/dimportsasxport.pdf> <https://www.stata.com/manuals/dmerge.pdf>
+
+### a
+
+``` stata
+. clear
+
+. cd "/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/"
+/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets
+
+. import sasxport5 "VIX_D.XPT"
+
+. tempfile vix_d
+
+. save `vix_d'
+file /var/folders/12/3jnlvfv534g58v853dkx2n380000gp/T//S_28265.000001 saved as .dta format
+
+. import sasxport5 "DEMO_D.XPT"
+
+. merge 1:1 _n using `vix_d', keep (match) nogenerate
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             6,980  
+    -----------------------------------------
+
+. count
+  6,980
+```
+
+### b
+I used this manual to generate the crosstabulation
+<https://www.stata.com/manuals/rtabulateoneway.pdf> 
+``` stata
+. gen agecat = .
+(6,980 missing values generated)
+
+. replace agecat = 0 if ridageyr <= 9
+(1,826 real changes made)
+
+. replace agecat = 1 if ridageyr>= 10 & ridageyr <= 19
+(1,831 real changes made)
+
+. replace agecat = 2 if ridageyr>= 20 & ridageyr <= 29
+(730 real changes made)
+
+. replace agecat = 3 if ridageyr>= 30 & ridageyr <= 39
+(562 real changes made)
+
+. replace agecat = 4 if ridageyr>= 40 & ridageyr <= 49
+(551 real changes made)
+
+. replace agecat = 5 if ridageyr>= 50 & ridageyr <= 59
+(429 real changes made)
+
+. replace agecat = 6 if ridageyr>= 60 & ridageyr <= 69
+(459 real changes made)
+
+. replace agecat = 7 if ridageyr>= 70 & ridageyr <= 79
+(325 real changes made)
+
+. replace agecat = 8 if ridageyr>= 80
+(267 real changes made)
+
+. 
+. label define agecatl 0 "0-9" 1 "10-19" 2 "20-29" 3 "30-39" 4 "40-49" 5 "50-59" 6 "60-69" 7 "
+> 70-79" 8 "80+" 
+
+. label values agecat agecatl  
+. label define viq220l 1 "Yes" 2 "No" 9 "Don't know" 
+
+. label values viq220 viq220l  
+. tab agecat viq220 , missing r
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+           |  Glasses/contact lenses worn for distance
+    agecat |       Yes         No  Don't kno          . |     Total
+-----------+--------------------------------------------+----------
+       0-9 |       691      1,032          0        103 |     1,826 
+           |     37.84      56.52       0.00       5.64 |    100.00 
+-----------+--------------------------------------------+----------
+     10-19 |       724        977          1        129 |     1,831 
+           |     39.54      53.36       0.05       7.05 |    100.00 
+-----------+--------------------------------------------+----------
+     20-29 |       310        379          0         41 |       730 
+           |     42.47      51.92       0.00       5.62 |    100.00 
+-----------+--------------------------------------------+----------
+     30-39 |       234        286          0         42 |       562 
+           |     41.64      50.89       0.00       7.47 |    100.00 
+-----------+--------------------------------------------+----------
+     40-49 |       210        307          0         34 |       551 
+           |     38.11      55.72       0.00       6.17 |    100.00 
+-----------+--------------------------------------------+----------
+     50-59 |       171        233          0         25 |       429 
+           |     39.86      54.31       0.00       5.83 |    100.00 
+-----------+--------------------------------------------+----------
+     60-69 |       176        260          0         23 |       459 
+           |     38.34      56.64       0.00       5.01 |    100.00 
+-----------+--------------------------------------------+----------
+     70-79 |       139        164          1         21 |       325 
+           |     42.77      50.46       0.31       6.46 |    100.00 
+-----------+--------------------------------------------+----------
+       80+ |       110        142          0         15 |       267 
+           |     41.20      53.18       0.00       5.62 |    100.00 
+-----------+--------------------------------------------+----------
+     Total |     2,765      3,780          2        433 |     6,980 
+           |     39.61      54.15       0.03       6.20 |    100.00 
+
+
+```
+
+### c
+For this part, I deleted the two observations that answered "don't know" to the vision question (dependent variable). Missings are dropped automatically when the logistic regression is conducted. 
+
+I used the stata manual on logistic regression and calculating information criteria: 
+<https://www.stata.com/manuals/rlogit.pdf>
+<https://www.stata.com/manuals/ricnote.pdf>
+
+``` stata
+. drop if viq220 == 9 
+(2 observations deleted)
+
+. replace viq220 = 0 if viq220 == 2
+(3,780 real changes made)
+
+. logit viq220 ridageyr, or
+
+Iteration 0:  Log likelihood = -4457.6265  
+Iteration 1:  Log likelihood = -4456.8023  
+Iteration 2:  Log likelihood = -4456.8023  
+
+Logistic regression                                     Number of obs =  6,545
+                                                        LR chi2(1)    =   1.65
+                                                        Prob > chi2   = 0.1992
+Log likelihood = -4456.8023                             Pseudo R2     = 0.0002
+
+------------------------------------------------------------------------------
+      viq220 | Odds ratio   Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ridageyr |   1.001334   .0010394     1.28   0.199     .9992992    1.003374
+       _cons |   .7047893   .0269956    -9.13   0.000     .6538163    .7597363
+------------------------------------------------------------------------------
+Note: _cons estimates baseline odds.
+
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |      6,545  -4457.627  -4456.802       2   8917.605   8931.177
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] IC note.
+
+. 
+. logit viq220 ridageyr ridreth1 riagendr, or
+
+Iteration 0:  Log likelihood = -4457.6265  
+Iteration 1:  Log likelihood = -4455.3966  
+Iteration 2:  Log likelihood = -4455.3966  
+
+Logistic regression                                     Number of obs =  6,545
+                                                        LR chi2(3)    =   4.46
+                                                        Prob > chi2   = 0.2159
+Log likelihood = -4455.3966                             Pseudo R2     = 0.0005
+
+------------------------------------------------------------------------------
+      viq220 | Odds ratio   Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ridageyr |   1.001532    .001047     1.46   0.143     .9994824    1.003587
+    ridreth1 |   .9676925   .0196083    -1.62   0.105      .930014    1.006898
+    riagendr |   1.021248   .0511375     0.42   0.675     .9257816    1.126559
+       _cons |   .7436445   .0742972    -2.96   0.003     .6113955    .9044999
+------------------------------------------------------------------------------
+Note: _cons estimates baseline odds.
+
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |      6,545  -4457.627  -4455.397       4   8918.793   8945.939
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] IC note.
+
+. 
+. logit viq220 ridageyr ridreth1 riagendr indfmpir, or
+
+Iteration 0:  Log likelihood =  -4218.266  
+Iteration 1:  Log likelihood = -4215.7305  
+Iteration 2:  Log likelihood = -4215.7305  
+
+Logistic regression                                     Number of obs =  6,195
+                                                        LR chi2(4)    =   5.07
+                                                        Prob > chi2   = 0.2801
+Log likelihood = -4215.7305                             Pseudo R2     = 0.0006
+
+------------------------------------------------------------------------------
+      viq220 | Odds ratio   Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ridageyr |   1.001663   .0010969     1.52   0.129      .999516    1.003816
+    ridreth1 |   .9706044   .0205664    -1.41   0.159     .9311206    1.011763
+    riagendr |   1.002546   .0516208     0.05   0.961     .9063093    1.109003
+    indfmpir |   .9827507   .0164527    -1.04   0.299     .9510272    1.015532
+       _cons |   .7865116   .0839908    -2.25   0.025     .6379787    .9696257
+------------------------------------------------------------------------------
+Note: _cons estimates baseline odds.
+
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |      6,195  -4218.266   -4215.73       5   8441.461   8475.118
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] IC note.
+
+```
+
+### d
+The odds of men and women being wears of glasses/contact lenses for distance vision does not differ, as the p-value for the gender coefficient in the model is greater than 0.05. This comes from the model output of part c. (Odds ratio is 1.002546 and the p-value is 0.961.) 
+
+To test if the proportions of glasses/contacts wearers for distance, I conduct a z test. The null hypothesis is that the difference between population proportion for male and female glasses/contact wearers for distance is zero, whereas the alternative hypothesis is that the difference between population proportion for male and female glasses/contact wearers for distance is greater than zero.
+
+I use this manual to figure out how to conduct a z-test:
+<https://www.stata.com/manuals/rztest.pdf>
+```stata
+. ztest viq220, by(riagendr)
+
+Two-sample z test
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. err.   Std. dev.   [95% conf. interval]
+---------+--------------------------------------------------------------------
+       1 |   3,223    .4197952    .0176145           1    .3852715     .454319
+       2 |   3,322    .4250452      .01735           1    .3910397    .4590506
+---------+--------------------------------------------------------------------
+    diff |           -.0052499    .0247243               -.0537088    .0432089
+------------------------------------------------------------------------------
+    diff = mean(1) - mean(2)                                      z =  -0.2123
+H0: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.4159         Pr(|Z| > |z|) = 0.8318          Pr(Z > z) = 0.5841
+
+```
+We see that the p-value corresponding to our alternative hypothesis is 0.8318. Thus, we fail to reject the null hypothesis and conclude we do not observe a statistically significant difference in proportion of wearers of glasses/contacts for distance between men and women.
+
+# Problem 2
+
+### a 
+
+```{r}
+#loading in dataset and familiarizing with the names of the datasets
+sakila <- dbConnect(RSQLite::SQLite(), "sakila_master.db")
+dbListTables(sakila)
+dbListFields(sakila, "language")
+dbListFields(sakila, "film")
+
+#single query to get the language names from the most frequent language in film after English -- merging the film and language datasets with film id, keeping those in film, and counting the number of appearances of each language in film and presenting by highest order
+
+dbGetQuery(sakila, "
+SELECT name, COUNT(l.language_id) AS count
+  FROM language AS l
+       RIGHT JOIN
+       (SELECT f.language_id
+          FROM film AS f
+       ) AS ff ON ff.language_id = l.language_id
+ GROUP BY ff.language_id
+ ORDER by count")
+
+```
+There are only English movies! Thus, there is no second-most frequent language in this dataset after English. 
+
+### b
+First way, using R
+
+I used this stack overflow to get a count() table in descending order:
+<https://stackoverflow.com/questions/35830859/sorting-output-of-tally-count-dplyr>
+```{r}
+film_category <- dbGetQuery(sakila, "
+SELECT *
+  FROM film_category
+")
+
+category <- dbGetQuery(sakila, "
+SELECT *
+  FROM category
+")
+
+film_category <- merge(film_category, category, by = "category_id", all.x = T) 
+
+film_category %>%
+  group_by(name) %>%
+    count() %>%
+    arrange(desc(n))
+
+```
+The most popular genre is sports (the genre comprises 74 of 1000 films).
+
+Second way, using SQL
+
+Joining film and film category and then counting from top down
+```{r}
+dbGetQuery(sakila, "
+SELECT c.category_id, c.name, COUNT(f.category_id) AS appear
+  FROM film_category AS f
+       INNER JOIN category AS c ON f.category_id = c.category_id
+ GROUP BY c.name
+ ORDER BY -appear
+ LIMIT 4
+")
+```
+We see that sports genre appears the most, 74 times. 
+
+### c
+
+First way, using R
+```{r}
+customer <- dbGetQuery(sakila, "
+SELECT *
+  FROM customer
+")
+city <- dbGetQuery(sakila, "
+SELECT *
+  FROM city
+")
+address <- dbGetQuery(sakila, "
+SELECT *
+  FROM address
+")
+country <- dbGetQuery(sakila, "
+SELECT *
+  FROM country
+")
+
+#merging datasets with common id, similar to how I did it for part b above 
+
+customer_merged <- merge(customer, address[c("address_id", "city_id")], by = "address_id", all.x = T) 
+customer_merged <- merge(customer_merged, city[c("country_id", "city_id")], by = "city_id", all.x = T) 
+customer_merged <- merge(customer_merged, country[c("country_id", "country")], by = "country_id") 
+
+#creating summary table at country table and filtering out which country has 9 occurences. 
+country_table <- customer_merged %>%
+  group_by(country) %>%
+  summarize(frequency = n())
+
+country_table %>%
+  filter(frequency == 9)
+```
+We see that the United Kingdom has exactly 9 customers. 
+
+Second way, using SQL
+```{r}
+
+
+```
+
+# Problem 3
+
+### a
+```{r}
+
+
+
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+
+
+```

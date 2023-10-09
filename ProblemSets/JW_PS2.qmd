@@ -419,12 +419,11 @@ file /Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/JW_PS2
     saved as PNG format
 ```
 
-![M
-argins plot](JW_PS2stata.png "Margins plot")
+![M argins plot](JW_PS2stata.png "Margins plot")
 
-After running the model, I use the first quartile, mean, and third quartile values of torque as representative values for the margins plot. I select the values of 200, 400, and 600, since horsepower is also continuous and these are the values that are included in the x axis of horsepower in the interaction plot from R. 
+After running the model, I use the first quartile, mean, and third quartile values of torque as representative values for the margins plot. I select the values of 200, 400, and 600, since horsepower is also continuous and these are the values that are included in the x axis of horsepower in the interaction plot from R.
 
-This interaction plot displays predictive margins for the relationship between mpg on highway and horsepower at different values of torque in 2011, while controlling for the other variables in the model. It looks like the interaction plot I created in R. 
+This interaction plot displays predictive margins for the relationship between mpg on highway and horsepower at different values of torque in 2011, while controlling for the other variables in the model. It looks like the interaction plot I created in R.
 
 ### e
 
