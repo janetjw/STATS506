@@ -55,8 +55,9 @@ file /var/folders/12/3jnlvfv534g58v853dkx2n380000gp/T//S_28265.000001 saved as .
 ```
 
 ### b
-I used this manual to generate the crosstabulation
-<https://www.stata.com/manuals/rtabulateoneway.pdf> 
+
+I used this manual to generate the crosstabulation <https://www.stata.com/manuals/rtabulateoneway.pdf>
+
 ``` stata
 . gen agecat = .
 (6,980 missing values generated)
@@ -138,15 +139,13 @@ I used this manual to generate the crosstabulation
      Total |     2,765      3,780          2        433 |     6,980 
            |     39.61      54.15       0.03       6.20 |    100.00 
 
-
 ```
 
 ### c
-For this part, I deleted the two observations that answered "don't know" to the vision question (dependent variable). Missings are dropped automatically when the logistic regression is conducted. 
 
-I used the stata manual on logistic regression and calculating information criteria: 
-<https://www.stata.com/manuals/rlogit.pdf>
-<https://www.stata.com/manuals/ricnote.pdf>
+For this part, I deleted the two observations that answered "don't know" to the vision question (dependent variable). Missings are dropped automatically when the logistic regression is conducted.
+
+I used the stata manual on logistic regression and calculating information criteria: <https://www.stata.com/manuals/rlogit.pdf> <https://www.stata.com/manuals/ricnote.pdf>
 
 ``` stata
 . drop if viq220 == 9 
@@ -251,17 +250,17 @@ Akaike's information criterion and Bayesian information criterion
            . |      6,195  -4218.266   -4215.73       5   8441.461   8475.118
 -----------------------------------------------------------------------------
 Note: BIC uses N = number of observations. See [R] IC note.
-
 ```
 
 ### d
-The odds of men and women being wears of glasses/contact lenses for distance vision does not differ, as the p-value for the gender coefficient in the model is greater than 0.05. This comes from the model output of part c. (Odds ratio is 1.002546 and the p-value is 0.961.) 
+
+The odds of men and women being wears of glasses/contact lenses for distance vision does not differ, as the p-value for the gender coefficient in the model is greater than 0.05. This comes from the model output of part c. (Odds ratio is 1.002546 and the p-value is 0.961.)
 
 To test if the proportions of glasses/contacts wearers for distance, I conduct a z test. The null hypothesis is that the difference between population proportion for male and female glasses/contact wearers for distance is zero, whereas the alternative hypothesis is that the difference between population proportion for male and female glasses/contact wearers for distance is greater than zero.
 
-I use this manual to figure out how to conduct a z-test:
-<https://www.stata.com/manuals/rztest.pdf>
-```stata
+I use this manual to figure out how to conduct a z-test: <https://www.stata.com/manuals/rztest.pdf>
+
+``` stata
 . ztest viq220, by(riagendr)
 
 Two-sample z test
@@ -278,13 +277,13 @@ H0: diff = 0
 
     Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
  Pr(Z < z) = 0.4159         Pr(|Z| > |z|) = 0.8318          Pr(Z > z) = 0.5841
-
 ```
+
 We see that the p-value corresponding to our alternative hypothesis is 0.8318. Thus, we fail to reject the null hypothesis and conclude we do not observe a statistically significant difference in proportion of wearers of glasses/contacts for distance between men and women.
 
 # Problem 2
 
-### a 
+### a
 
 ```{r}
 #loading in dataset and familiarizing with the names of the datasets
@@ -306,13 +305,15 @@ SELECT name, COUNT(l.language_id) AS count
  ORDER by count")
 
 ```
-There are only English movies! Thus, there is no second-most frequent language in this dataset after English. 
+
+There are only English movies! Thus, there is no second-most frequent language in this dataset after English.
 
 ### b
+
 First way, using R
 
-I used this stack overflow to get a count() table in descending order:
-<https://stackoverflow.com/questions/35830859/sorting-output-of-tally-count-dplyr>
+I used this stack overflow to get a count() table in descending order: <https://stackoverflow.com/questions/35830859/sorting-output-of-tally-count-dplyr>
+
 ```{r}
 film_category <- dbGetQuery(sakila, "
 SELECT *
@@ -332,12 +333,14 @@ film_category %>%
     arrange(desc(n))
 
 ```
+
 The most popular genre is sports (the genre comprises 74 of 1000 films).
 
 Second way, using SQL
 
-Joining film and film category and then counting from top down
 ```{r}
+#Joining appearances of each category and film category and then counting from top down
+
 dbGetQuery(sakila, "
 SELECT c.category_id, c.name, COUNT(f.category_id) AS appear
   FROM film_category AS f
@@ -347,11 +350,13 @@ SELECT c.category_id, c.name, COUNT(f.category_id) AS appear
  LIMIT 4
 ")
 ```
-We see that sports genre appears the most, 74 times. 
+
+We see that sports genre appears the most, 74 times.
 
 ### c
 
 First way, using R
+
 ```{r}
 customer <- dbGetQuery(sakila, "
 SELECT *
@@ -376,63 +381,129 @@ customer_merged <- merge(customer, address[c("address_id", "city_id")], by = "ad
 customer_merged <- merge(customer_merged, city[c("country_id", "city_id")], by = "city_id", all.x = T) 
 customer_merged <- merge(customer_merged, country[c("country_id", "country")], by = "country_id") 
 
-#creating summary table at country table and filtering out which country has 9 occurences. 
+#creating summary table at country table and filtering out which country has 9 customers 
 country_table <- customer_merged %>%
   group_by(country) %>%
-  summarize(frequency = n())
+  summarize(customers = n())
 
 country_table %>%
-  filter(frequency == 9)
+  filter(customers == 9)
 ```
-We see that the United Kingdom has exactly 9 customers. 
+
+We see that the United Kingdom has exactly 9 customers.
 
 Second way, using SQL
+
 ```{r}
+#doing a simliar thing but in SQL, continuously merging via common id as inner joins -- address_id, city_id, country_id, to country and then limiting output to countries with 9 customers
 
-
+dbGetQuery(sakila, "
+  SELECT co.country, co.country_id, count(co.country) AS customers
+   FROM customer as cu
+    INNER JOIN address as ad ON ad.address_id = cu.address_id
+    INNER JOIN city as ci ON ci.city_id = ad.city_id
+    INNER JOIN country as co ON co.country_id = ci.country_id
+    GROUP BY co.country
+    HAVING customers == 9
+  ")
 ```
+Once againm, we see that the United Kingdom has exactly 9 customers.
 
 # Problem 3
 
 ### a
+
 ```{r}
+us <- read.csv("us-500.csv")
 
+sum(grepl(".net$", us$email))/nrow(us)
+```
 
+0.14 of the email addresses in this dataset are hosted at a domain with TLD ".net".
+
+### b
+
+I used this stack overflow post to figure out how to write alphanumeric characters: <https://stackoverflow.com/questions/8959243/remove-non-alphanumeric-symbols-from-a-string>
+
+```{r}
+#us$email[which(grepl("^([[:alnum:]])+[\\@]", us$email) )]
+
+#This expression excludes those who only have alphanumeric charactes prior to the @ before the domain main. I allow people to have '.' in their emails if they come before the domain.
+
+length(us$email[-which(grepl("^([[:alnum:]])+[\\@]", us$email) )] )/ length(us$email)
+```
+
+0.506 of the emails have at least one nonalphanumeric character in them.
+
+### c
+
+```{r}
+#creating tables with area codes for first and second phone numbers
+areacodes1 <- as.data.frame(substr(us$phone1, 1,3)); colnames(areacodes1) <- "code"
+areacodes2 <- as.data.frame(substr(us$phone2, 1,3)); colnames(areacodes2) <- "code"
+
+#row bind to create one big table of area codes
+areacodes <- rbind(areacodes1, areacodes2); areacodes$code <- as.factor(areacodes$code)
+
+#creating a summary table -- getting the six most freqeuent area codes by first calculating frequency of appearances 
+head(areacodes %>%
+group_by(code) %>%
+  summarise(freq = n()) %>%
+      arrange(desc(freq))
+  )
+```
+
+973 is the most popular area code, it appears 36 times across columns phone1 and phone2.
+
+### d
+
+This stack overflow post helped me with extracting the second elements from the list: <https://stackoverflow.com/questions/22430365/extract-second-element-from-every-item-in-a-list>
+
+```{r}
+#collecting the addresses and splitting them into the before and after # sign
+aptnumbers <- strsplit(us$address[grep("#+[0-9]+$", us$address)], " #")
+
+#extracting the apartment numbers and creating the histogram
+hist(as.numeric(sapply(aptnumbers, "[", 2)), main ="Histogram of apartment numbers", x=)
+```
+
+### e
+
+```{r}
+#creating vector of apartment numbers, substringing the first digit, and making it into a dataframe
+aptnumber.vec <- as.numeric(sapply(aptnumbers, "[", 2))
+leading <- as.data.frame(substr(aptnumber.vec, 1, 1)); colnames(leading) <- "leading"
+
+#creating summary table -- for every leading digit, getting the frequency, proportion of times it shows up, and what Benford's law would suggest about the distribution
+leading %>%
+  group_by(leading) %>%
+  summarize(count=n()) %>%
+  mutate(freq = count/sum(count),
+         probability = log10(1+1/as.numeric(leading))) 
 
 ```
 
-```{r}
+Based on this mismatch between the observed frequencies of the digits occurence and the calculated probabilities according to Benford's law, this seems to not resemble real data. For instance, 1 and 2 appear less frequently than Benford's law states and digits 5 to 9 appear much more than the law would suggest.
 
+### e
 
-
-```
-
-```{r}
-
-
-
-```
+This stack overflow post helped me find out the way to write a space with regular expressions: <https://stackoverflow.com/questions/25477920/get-characters-before-first-space>
 
 ```{r}
+#getting the street number
+streetnumbers <- gsub(" .*", "", us$address)
+#getting the last digit 
+ending <- as.data.frame(substr(streetnumbers, nchar(streetnumbers), nchar(streetnumbers))); colnames(ending) <- "ending"
 
+#removing last digits that end with zero
+ending <- as.data.frame(ending[-which(ending$ending == "0"),]); colnames(ending) <- "ending"
 
-
-```
-
-```{r}
-
-
-
-```
-
-```{r}
-
-
-
-```
-
-```{r}
-
-
+#creating summary table -- for every leading digit, getting the frequency, proportion of times it shows up, and what Benford's law would suggest about the distribution
+ending %>%
+  group_by(ending) %>%
+  summarize(count=n()) %>%
+  mutate(freq = count/sum(count),
+         probability = log10(1+1/as.numeric(ending))) 
 
 ```
+We see that probabilities don't really reflect the frequencies at which these digits occur, While 3, 4 aren't too far off, other digits occur much more or less frequently than Benford's law would suggest. 
