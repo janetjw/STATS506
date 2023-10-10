@@ -17,9 +17,9 @@ library(DBI)
 
 Git repository
 
-<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.qmd>
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS3.qmd>
 
-<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS2.html>
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS3.html>
 
 ## Problem 1
 
