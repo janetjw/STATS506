@@ -1,0 +1,164 @@
+---
+title: "Problem Set 4"
+author: "Janet Wang"
+format: html
+code-fold: true
+code-summary: "Show the code"
+embed-resources: true
+editor: visual
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/ProblemSets")
+library(tidyverse)
+library(nycflights13)
+```
+
+# Question 1
+
+### a
+
+I used the CRAN manual to assist with data information: <https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf>.
+```{r}
+#data("flights")
+#data("airports")
+
+flights %>%
+  rename(faa = origin) %>%      #renaming a variable so i can merge 
+  left_join(airports %>%        #merging in another datset to get the name of the airport
+              group_by(faa) %>% 
+              summarise(name = toString(name)), by = 'faa') %>% #getting the name of the airport 
+  group_by(dest) %>% 
+  filter(n() >= 10) %>% # grouping by destination to filter destinations with 10+ flights 
+  ungroup() %>%
+  rename(origin = faa) %>% #naming the variable back
+  group_by(name) %>% #grouping by origin airport 
+  summarize(mean_delay = mean(dep_delay, na.rm = TRUE), #calculating mean delay
+            median_delay = median(dep_delay, na.rm = TRUE)) %>% #calculating median delay
+    arrange(-mean_delay) #arranging by descending mean delay
+
+#the table below is the same thing but uses the arrival delays instead of departure delays 
+
+flights %>%
+  rename(faa = origin) %>%
+  left_join(airports %>%
+              group_by(faa) %>%
+              summarise(name = toString(name)), by = 'faa') %>%
+  group_by(dest) %>%
+  filter(n() >= 10) %>%
+  ungroup() %>%
+  rename(origin = faa) %>%
+  group_by(name) %>%
+  summarize(mean_delay = mean(arr_delay, na.rm = TRUE),
+            median_delay = median(arr_delay, na.rm = TRUE)) %>%
+  arrange(-mean_delay)
+```
+### b 
+```{r}
+fl<-flights %>%
+  left_join(planes %>%
+              group_by(tailnum) %>%
+              summarise(model = toString(model)), by = 'tailnum') #left join to attach model names to each of the tail numbers for airplanes
+
+fl <- fl %>%
+  mutate(speed = distance/air_time) # calculating speed by dividing distance between airports by air time in minutes (miles per minute)
+
+fl %>%
+  group_by(model) %>%
+  summarise(avgspeed = mean(speed, na.rm = T)*60) %>%  #calculating average speed, #multiplying average speed by 60 to convert from miles per minute to miles per hour
+  arrange(-avgspeed) %>%
+  head(1)
+
+#it appears the 777-222 has the fastest 
+#ugh do it in mph
+fl %>%
+  filter(model == "777-222") %>%
+  group_by(model) %>%
+  reframe(avgspeed_mph = mean(speed, na.rm = T)*60,
+          number_of_flights = n())
+```
+
+# 2
+```{r}
+nnmaps <- read.csv("chicago-nmmaps.csv")
+
+get_temp <- function(month, year, data, celsius = FALSE, average_fn = mean) {
+  
+  if(is.numeric(month) == FALSE){
+    monthvector <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+    new_month = grep(month, monthvector)
+  }
+  else(new_month = month)
+  new_year = year
+  
+  if(new_year <= max(data$year) & new_year >= min(data$year) & new_month <= 12 & new_month >= 1 ){
+    dat <- data %>%
+    filter(month_numeric == new_month, year == new_year) %>%
+    summarise(avgtemp = 
+                ifelse(celsius == FALSE, average_fn(temp), (average_fn(temp) - 32)*5/9 ) ) #if else statement to calculate tmeperature in celsisus if FALSE
+    dat$avgtemp # temp printing as vector
+  }
+  else(print("Error:date is out of range")) #error message if date is out of range
+}
+```
+
+Evaluating the following - things seem to work!
+```{r}
+get_temp("Apr", 1999, data = nnmaps)
+get_temp("Apr", 1999, data = nnmaps, celsius = TRUE)
+get_temp(10, 1998, data = nnmaps, average_fn = median)
+get_temp(13, 1998, data = nnmaps)
+get_temp(2, 2005, data = nnmaps)
+get_temp("November", 1999, data =nnmaps, celsius = TRUE,
+         average_fn = function(x) {
+           x %>% sort -> x
+           x[2:(length(x) - 1)] %>% mean %>% return
+         })
+```
+
+# 3
+
+### a 
+I used this webpage to help me order the frequency table: <https://online.stat.psu.edu/stat480/lesson/12/12.1#:~:text=PROC%20FREQ%20options%3B%20tables%20..,in%20your%20input%20data%20set>
+
+We see that California has the highest percentage of records. 3.17% of records correspond to Michigan. 
+```{r}
+
+
+```
+
+### b
+Used this link for how to plot a histogram: <https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html>
+Used this link for how to plot certain value: <https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067>
+```{r}
+
+
+```
+
+### c
+```{r}
+
+
+```
+
+### d
+Used this to figure out regression command in SAS: <https://jbhender.github.io/Stats506/F17/Projects/Abalone_WLS.html>
+```{r}
+
+
+```
+We see that 
+
+### e 
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```

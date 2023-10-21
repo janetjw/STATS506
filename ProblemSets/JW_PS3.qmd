@@ -138,7 +138,6 @@ I used this manual to generate the crosstabulation <https://www.stata.com/manual
 -----------+--------------------------------------------+----------
      Total |     2,765      3,780          2        433 |     6,980 
            |     39.61      54.15       0.03       6.20 |    100.00 
-
 ```
 
 ### c
@@ -407,6 +406,7 @@ dbGetQuery(sakila, "
     HAVING customers == 9
   ")
 ```
+
 Once againm, we see that the United Kingdom has exactly 9 customers.
 
 # Problem 3
@@ -506,4 +506,5 @@ ending %>%
          probability = log10(1+1/as.numeric(ending))) 
 
 ```
-We see that probabilities don't really reflect the frequencies at which these digits occur, While 3, 4 aren't too far off, other digits occur much more or less frequently than Benford's law would suggest. 
+
+We see that probabilities don't really reflect the frequencies at which these digits occur, While 3, 4 aren't too far off, other digits occur much more or less frequently than Benford's law would suggest.
