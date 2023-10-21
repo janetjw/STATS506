@@ -15,11 +15,17 @@ library(tidyverse)
 library(nycflights13)
 ```
 
+Github here: 
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.qmd>
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.html>
+
+
 # Question 1
 
 ### a
 
 I used the CRAN manual to assist with data information: <https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf>.
+
 ```{r}
 #data("flights")
 #data("airports")
@@ -54,7 +60,9 @@ flights %>%
             median_delay = median(arr_delay, na.rm = TRUE)) %>%
   arrange(-mean_delay)
 ```
-### b 
+
+### b
+
 ```{r}
 fl<-flights %>%
   left_join(planes %>%
@@ -80,6 +88,7 @@ fl %>%
 ```
 
 # 2
+
 ```{r}
 nnmaps <- read.csv("chicago-nmmaps.csv")
 
@@ -104,6 +113,7 @@ get_temp <- function(month, year, data, celsius = FALSE, average_fn = mean) {
 ```
 
 Evaluating the following - things seem to work!
+
 ```{r}
 get_temp("Apr", 1999, data = nnmaps)
 get_temp("Apr", 1999, data = nnmaps, celsius = TRUE)
@@ -119,46 +129,244 @@ get_temp("November", 1999, data =nnmaps, celsius = TRUE,
 
 # 3
 
+SAS RESULTS HERE: <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html>
+
 ### a 
+
 I used this webpage to help me order the frequency table: <https://online.stat.psu.edu/stat480/lesson/12/12.1#:~:text=PROC%20FREQ%20options%3B%20tables%20..,in%20your%20input%20data%20set>
 
-We see that California has the highest percentage of records. 3.17% of records correspond to Michigan. 
-```{r}
+```sas
 
 
+/* data library for reading/writing data: ---------------------------------- */
+%let in_path = ~/my_shared_file_links/jbhender0/input_data;
+%let out_path = ~/my_shared_file_links/jbhender0/output_data; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+/* Create a data set recs referring to existing file: ---------------------- */
+data recs;
+ set in_lib.recs2020_public_v5;  
+
+/* a */
+proc freq data = recs order = freq;
+   tables state_name ;
+   weight nweight ;
+run;
 ```
 
+We see that California has the highest percentage of records. 3.17% of records correspond to Michigan.
+
 ### b
-Used this link for how to plot a histogram: <https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html>
-Used this link for how to plot certain value: <https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067>
-```{r}
+```sas
+Used this link for how to plot a histogram: <https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html> Used this link for how to plot certain value: <https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067>
 
 
+proc univariate data=recs noprint;
+   where dollarel > 0 ;
+    histogram dollarel;
+run;
 ```
 
 ### c
-```{r}
+```sas
 
-
+data lrecs;
+   set recs;
+   where dollarel > 0 ;
+   logdollarel = log( dollarel );
+run;
+proc univariate data=lrecs noprint;
+    histogram logdollarel;
+run;
 ```
 
 ### d
+
 Used this to figure out regression command in SAS: <https://jbhender.github.io/Stats506/F17/Projects/Abalone_WLS.html>
-```{r}
+```sas
 
-
-```
-We see that 
-
-### e 
-
-```{r}
-
-
+proc reg data= lrecs;
+	where prkgplc1 >= 0 ;
+	weight nweight;
+	model logdollarel = totrooms prkgplc1;
+	output out=lrecsout pred=pred;
+	run;
 ```
 
 
-```{r}
+### e
 
+```sas
 
+data lrecsout1;
+   set lrecsout;
+   predlog = exp( pred );
+run;
+	
+proc sgplot data=lrecsout1;
+   scatter y=dollarel x=predlog;
+run;
 ```
+
+# Question 4
+
+### a
+It appears the codebook was generated in stata, with the command 'codebook'.
+
+### b
+```sas
+
+/* data library for reading/writing data: ---------------------------------- */
+%let in_path = ~/sasuser.v94 ;
+%let out_path = ~/sasuser.v94 ; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+/* Create a data set public referring to existing file: ---------------------- */
+data public;
+ set in_lib.public2022 ;  
+
+/* b */
+
+proc sql; 
+
+create table output as 
+select public.b3, public.nd2, public.b7_a, public.gh1, public.educ_4cat, public.ppethm from public 
+
+quit;
+```
+
+### c
+```sas
+Used this link to help me: <https://www.listendata.com/2023/07/sas-proc-export-with-examples.html#how_to_export_sas_data_to_csv_file>
+
+proc export data=output 
+  outfile='~/sasuser.v94/ps4_4.csv' 
+  dbms = csv 
+  replace;
+run;
+```
+
+### d
+```stata
+. cd "/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/"
+/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets
+
+. import delimited "ps4_4 .csv"
+(encoding automatically selected: ISO-8859-1)
+(8 vars, 11,667 obs)
+
+. 
+. 
+. describe
+
+Contains data
+ Observations:        11,667                  
+    Variables:             8                  
+----------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------
+caseid          int     %8.0g                 CaseID
+weight_pop      float   %9.0g                 
+b3              byte    %8.0g                 B3
+nd2             byte    %8.0g                 ND2
+b7_a            byte    %8.0g                 B7_a
+gh1             byte    %8.0g                 GH1
+educ_4cat       byte    %8.0g                 
+ppethm          byte    %8.0g                 
+----------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+```
+
+### e
+```stata
+. gen better = 0 
+
+. replace better = 1 if b3 >= 3
+(7,371 real changes made)
+```
+
+### f
+```stata
+. svyset caseid [pw=weight_pop]
+
+Sampling weights: weight_pop
+             VCE: linearized
+     Single unit: missing
+        Strata 1: <one>
+ Sampling unit 1: caseid
+           FPC 1: <zero>
+
+. 
+. svy: logit better i.nd2 i.b7_a i.gh1 i.educ_4cat i.ppethm
+(running logit on estimation sample)
+
+Survey: Logistic regression
+
+Number of strata =      1                        Number of obs   =      11,667
+Number of PSUs   = 11,667                        Population size = 255,114,223
+                                                 Design df       =      11,666
+                                                 F(17, 11650)    =       55.33
+                                                 Prob > F        =      0.0000
+
+------------------------------------------------------------------------------
+             |             Linearized
+      better | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         nd2 |
+          2  |   .0617432   .0914704     0.68   0.500     -.117554    .2410404
+          3  |  -.0055809   .0847456    -0.07   0.947    -.1716965    .1605347
+          4  |   .2504091   .1995796     1.25   0.210    -.1408004    .6416186
+          5  |    .230488   .1681636     1.37   0.171    -.0991407    .5601168
+             |
+        b7_a |
+          2  |   .8093763   .0599139    13.51   0.000      .691935    .9268176
+          3  |   1.760688    .067953    25.91   0.000     1.627489    1.893887
+          4  |   2.599717    .198168    13.12   0.000     2.211274    2.988159
+             |
+         gh1 |
+          2  |  -.0257537    .056274    -0.46   0.647    -.1360602    .0845528
+          3  |   .1237127   .0589714     2.10   0.036     .0081189    .2393065
+          4  |   .3784596   .0981945     3.85   0.000      .185982    .5709372
+             |
+   educ_4cat |
+          2  |   .0541308   .1145203     0.47   0.636    -.1703482    .2786097
+          3  |   .1013396   .1091103     0.93   0.353    -.1125348     .315214
+          4  |   .1962778   .1095482     1.79   0.073     -.018455    .4110105
+             |
+      ppethm |
+          2  |   .8605619   .0809846    10.63   0.000     .7018186    1.019305
+          3  |   .4417021   .1194351     3.70   0.000     .2075893    .6758149
+          4  |   .2769444   .0710777     3.90   0.000     .1376202    .4162686
+          5  |  -.0936297   .1300828    -0.72   0.472    -.3486138    .1613544
+             |
+       _cons |  -.7097757   .1389074    -5.11   0.000    -.9820574    -.437494
+------------------------------------------------------------------------------
+```
+To assess whether the respondent’s family is better off, the same, or worse off financially compared to 12 month’s ago can be predicted by thinking that the chance of experiencing a natural disaster or severe weather event will be higher, lower or about the same in 5 years, I run this logistic regression. I treat all variables as categorical given the codebook presents them as such. 
+
+I look at the p-values of nd2, the coefficients for respondents feelings towards disaster/event. Sine they are not statistically significant, I conclude that there is no significant association between respondent attitudes towards financial welfare currently compared to 12 months ago and respondents attitudes about the probability of experiencing a disaster/severe event. Notice that we control for home ownership/rental, and economic feelings, as well as race, and most categories for those controls have some significant association with the dependent variable. 
+
+#### g
+```stata
+. save ps4_4.dta, replace 
+(file ps4_4.dta not found)
+file ps4_4.dta saved
+```
+
+### h
+This webpage helped me with setting up svyglm: <https://stats.oarc.ucla.edu/r/seminars/survey-data-analysis-with-r/>
+```{r}
+library(survey); library(haven)
+dat <- read_dta("ps4_4.dta")
+
+my_svy <- svydesign(id = ~ caseid, weight = ~ weight_pop, data = dat)
+
+my_fit <- svyglm(as.factor(better) ~ as.factor(nd2) + as.factor(b7_a) + as.factor(gh1) + as.factor(educ_4cat) + as.factor(ppethm), my_svy, family = "binomial")
+
+psrsq(my_fit)
+```
+I get a pseudo R squared of 0.1069071. 
