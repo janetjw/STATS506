@@ -3045,6 +3045,7 @@ vertical-align: -.125em;
 
 </header>
 
+<p>Github here: <a href="https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.qmd" class="uri">https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.qmd</a> <a href="https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.html" class="uri">https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.html</a></p>
 <section id="question-1" class="level1">
 <h1>Question 1</h1>
 <section id="a" class="level3">
@@ -3053,8 +3054,8 @@ vertical-align: -.125em;
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#data(&quot;flights&quot;)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#data(&quot;airports&quot;)</span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;flights&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;airports&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>flights <span class="sc">%&gt;%</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">faa =</span> origin) <span class="sc">%&gt;%</span>      <span class="co">#renaming a variable so i can merge </span></span>
@@ -3108,6 +3109,7 @@ vertical-align: -.125em;
 </section>
 <section id="b" class="level3">
 <h3 class="anchored" data-anchor-id="b">b</h3>
+<p>I use air time to calculate speed because air time is a more accurate representation of time spent traveling distance than arrival time minus departure time.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -3173,7 +3175,7 @@ vertical-align: -.125em;
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                <span class="fu">ifelse</span>(celsius <span class="sc">==</span> <span class="cn">FALSE</span>, <span class="fu">average_fn</span>(temp), (<span class="fu">average_fn</span>(temp) <span class="sc">-</span> <span class="dv">32</span>)<span class="sc">*</span><span class="dv">5</span><span class="sc">/</span><span class="dv">9</span> ) ) <span class="co">#if else statement to calculate tmeperature in celsisus if FALSE</span></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>avgtemp <span class="co"># temp printing as vector</span></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>(<span class="fu">print</span>(<span class="st">&quot;Error:date is out of range&quot;</span>)) <span class="co">#error message if date is out of range</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>(<span class="fu">paste</span>(<span class="st">&quot;Error: date is out of range&quot;</span>)) <span class="co">#error message if date is out of range</span></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -3205,28 +3207,22 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_temp</span>(<span class="dv">13</span>, <span class="dv">1998</span>, <span class="at">data =</span> nnmaps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Error:date is out of range&quot;</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Error:date is out of range&quot;</code></pre>
+<pre><code>[1] &quot;Error: date is out of range&quot;</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_temp</span>(<span class="dv">2</span>, <span class="dv">2005</span>, <span class="at">data =</span> nnmaps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_temp</span>(<span class="dv">2</span>, <span class="dv">2005</span>, <span class="at">data =</span> nnmaps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Error:date is out of range&quot;</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Error:date is out of range&quot;</code></pre>
+<pre><code>[1] &quot;Error: date is out of range&quot;</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_temp</span>(<span class="st">&quot;November&quot;</span>, <span class="dv">1999</span>, <span class="at">data =</span>nnmaps, <span class="at">celsius =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">average_fn =</span> <span class="cf">function</span>(x) {</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>           x <span class="sc">%&gt;%</span> sort <span class="ot">-&gt;</span> x</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>           x[<span class="dv">2</span><span class="sc">:</span>(<span class="fu">length</span>(x) <span class="sc">-</span> <span class="dv">1</span>)] <span class="sc">%&gt;%</span> mean <span class="sc">%&gt;%</span> return</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>         })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_temp</span>(<span class="st">&quot;November&quot;</span>, <span class="dv">1999</span>, <span class="at">data =</span>nnmaps, <span class="at">celsius =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">average_fn =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>           x <span class="sc">%&gt;%</span> sort <span class="ot">-&gt;</span> x</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>           x[<span class="dv">2</span><span class="sc">:</span>(<span class="fu">length</span>(x) <span class="sc">-</span> <span class="dv">1</span>)] <span class="sc">%&gt;%</span> mean <span class="sc">%&gt;%</span> return</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>         })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 7.301587</code></pre>
@@ -3235,7 +3231,7 @@ vertical-align: -.125em;
 </section>
 <section id="section-1" class="level1">
 <h1>3</h1>
-<p>SAS RESULTS HERE:</p>
+<p>SAS RESULTS HERE: <a href="https://htmlpreview.github.io/?https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html" class="uri">https://htmlpreview.github.io/?https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html</a> <a href="https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html" class="uri">https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html</a></p>
 <section id="a-1" class="level3">
 <h3 class="anchored" data-anchor-id="a-1">a</h3>
 <p>I used this webpage to help me order the frequency table: <a href="https://online.stat.psu.edu/stat480/lesson/12/12.1#:~:text=PROC%20FREQ%20options%3B%20tables%20..,in%20your%20input%20data%20set" class="uri">https://online.stat.psu.edu/stat480/lesson/12/12.1#:~:text=PROC%20FREQ%20options%3B%20tables%20..,in%20your%20input%20data%20set</a></p>
@@ -3256,17 +3252,16 @@ proc freq data = recs order = freq;
    tables state_name ;
    weight nweight ;
 run;</code></pre>
-<p>We see that California has the highest percentage of records. 3.17% of records correspond to Michigan.</p>
+<p>We see that California has the highest percentage of records, with 10.67% of records. 3.17% of records correspond to Michigan.</p>
 </section>
 <section id="b-1" class="level3">
 <h3 class="anchored" data-anchor-id="b-1">b</h3>
-<pre class="sas"><code>Used this link for how to plot a histogram: &lt;https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html&gt; Used this link for how to plot certain value: &lt;https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067&gt;
-
-
-proc univariate data=recs noprint;
+<p>Used this link for how to plot a histogram: <a href="https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html" class="uri">https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html</a> Used this link for how to restrict to certain values: <a href="https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067" class="uri">https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067</a></p>
+<pre class="sas"><code>proc univariate data=recs noprint;
    where dollarel &gt; 0 ;
     histogram dollarel;
 run;</code></pre>
+<p>Here is the histogram.</p>
 </section>
 <section id="c" class="level3">
 <h3 class="anchored" data-anchor-id="c">c</h3>
@@ -3279,6 +3274,7 @@ run;
 proc univariate data=lrecs noprint;
     histogram logdollarel;
 run;</code></pre>
+<p>Here is the log histogram.</p>
 </section>
 <section id="d" class="level3">
 <h3 class="anchored" data-anchor-id="d">d</h3>
@@ -3302,6 +3298,7 @@ run;
 proc sgplot data=lrecsout1;
    scatter y=dollarel x=predlog;
 run;</code></pre>
+<p>This is the scatterplot.</p>
 </section>
 </section>
 <section id="question-4" class="level1">
@@ -3334,8 +3331,8 @@ quit;</code></pre>
 </section>
 <section id="c-1" class="level3">
 <h3 class="anchored" data-anchor-id="c-1">c</h3>
-<pre class="sas"><code>Used this link to help me: &lt;https://www.listendata.com/2023/07/sas-proc-export-with-examples.html#how_to_export_sas_data_to_csv_file&gt;
-
+<p>Used this link to help me export data: <a href="https://www.listendata.com/2023/07/sas-proc-export-with-examples.html#how_to_export_sas_data_to_csv_file" class="uri">https://www.listendata.com/2023/07/sas-proc-export-with-examples.html#how_to_export_sas_data_to_csv_file</a></p>
+<pre class="sas"><code>
 proc export data=output 
   outfile=&#39;~/sasuser.v94/ps4_4.csv&#39; 
   dbms = csv 
@@ -3344,106 +3341,106 @@ run;</code></pre>
 </section>
 <section id="d-1" class="level3">
 <h3 class="anchored" data-anchor-id="d-1">d</h3>
-<div class="sourceCode" id="cb31"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>. cd <span class="st">&quot;/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/&quot;</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>/Users/janetjw/Dropbox (University <span class="kw">of</span> Michigan)/STATS506/ProblemSets</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>. import delimited <span class="st">&quot;ps4_4 .csv&quot;</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>(encoding automatically selected: ISO-8859-1)</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>(8 vars, 11,667 <span class="kw">obs</span>)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>. </span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>. </span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>. <span class="kw">describe</span></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>Contains <span class="kw">data</span></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a> Observations:        11,667                  </span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    Variables:             8                  </span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------------------------</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>Variable      Storage   Display    Value</span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>    <span class="bn">name</span>         <span class="dv">type</span>    <span class="kw">format</span>    <span class="kw">label</span>      Variable <span class="kw">label</span></span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------------------------</span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>caseid          <span class="kw">int</span>     %8.0g                 CaseID</span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>weight_pop      <span class="kw">float</span>   %9.0g                 </span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>b3              <span class="kw">byte</span>    %8.0g                 B3</span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>nd2             <span class="kw">byte</span>    %8.0g                 ND2</span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>b7_a            <span class="kw">byte</span>    %8.0g                 B7_a</span>
-<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>gh1             <span class="kw">byte</span>    %8.0g                 GH1</span>
-<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>educ_4cat       <span class="kw">byte</span>    %8.0g                 </span>
-<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>ppethm          <span class="kw">byte</span>    %8.0g                 </span>
-<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------------------------</span>
-<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>Sorted <span class="kw">by</span>: </span>
-<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>     Note: Dataset has changed since <span class="fu">last</span> saved.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>. cd <span class="st">&quot;/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/&quot;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>/Users/janetjw/Dropbox (University <span class="kw">of</span> Michigan)/STATS506/ProblemSets</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>. import delimited <span class="st">&quot;ps4_4 .csv&quot;</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>(encoding automatically selected: ISO-8859-1)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>(8 vars, 11,667 <span class="kw">obs</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>. </span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>. </span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>. <span class="kw">describe</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>Contains <span class="kw">data</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a> Observations:        11,667                  </span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    Variables:             8                  </span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------------------------</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>Variable      Storage   Display    Value</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>    <span class="bn">name</span>         <span class="dv">type</span>    <span class="kw">format</span>    <span class="kw">label</span>      Variable <span class="kw">label</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------------------------</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>caseid          <span class="kw">int</span>     %8.0g                 CaseID</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>weight_pop      <span class="kw">float</span>   %9.0g                 </span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>b3              <span class="kw">byte</span>    %8.0g                 B3</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>nd2             <span class="kw">byte</span>    %8.0g                 ND2</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>b7_a            <span class="kw">byte</span>    %8.0g                 B7_a</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>gh1             <span class="kw">byte</span>    %8.0g                 GH1</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>educ_4cat       <span class="kw">byte</span>    %8.0g                 </span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>ppethm          <span class="kw">byte</span>    %8.0g                 </span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------------------------</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>Sorted <span class="kw">by</span>: </span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>     Note: Dataset has changed since <span class="fu">last</span> saved.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="e-1" class="level3">
 <h3 class="anchored" data-anchor-id="e-1">e</h3>
-<div class="sourceCode" id="cb32"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">gen</span> better = 0 </span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>. <span class="kw">replace</span> better = 1 <span class="kw">if</span> b3 &gt;= 3</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>(7,371 <span class="fu">real</span> changes made)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">gen</span> better = 0 </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>. <span class="kw">replace</span> better = 1 <span class="kw">if</span> b3 &gt;= 3</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>(7,371 <span class="fu">real</span> changes made)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="f" class="level3">
 <h3 class="anchored" data-anchor-id="f">f</h3>
-<div class="sourceCode" id="cb33"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">svyset</span> caseid [pw=weight_pop]</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>Sampling weights: weight_pop</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="kw">VCE</span>: <span class="kw">linearized</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>     Single unit: <span class="fu">missing</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>        Strata 1: &lt;one&gt;</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a> Sampling unit 1: caseid</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>           FPC 1: &lt;<span class="bn">zero</span>&gt;</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>. </span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>. <span class="kw">svy</span>: <span class="kw">logit</span> better i.nd2 i.b7_a i.gh1 i.educ_4cat i.ppethm</span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>(running <span class="kw">logit</span> <span class="kw">on</span> estimation <span class="kw">sample</span>)</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>Survey: Logistic regression</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>Number <span class="kw">of</span> <span class="kw">strata</span> =      1                        Number <span class="kw">of</span> <span class="kw">obs</span>   =      11,667</span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>Number <span class="kw">of</span> PSUs   = 11,667                        Population <span class="kw">size</span> = 255,114,223</span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>                                                 Design df       =      11,666</span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>                                                 <span class="fu">F</span>(17, 11650)    =       55.33</span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>                                                 Prob &gt; <span class="fu">F</span>        =      0.0000</span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>             |             Linearized</span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>      better | Coefficient  <span class="fu">std</span>. err.      t    P&gt;|t|     [95% conf. interval]</span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>-------------+----------------------------------------------------------------</span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>         nd2 |</span>
-<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>          2  |   .0617432   .0914704     0.68   0.500     -.117554    .2410404</span>
-<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>          3  |  -.0055809   .0847456    -0.07   0.947    -.1716965    .1605347</span>
-<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>          4  |   .2504091   .1995796     1.25   0.210    -.1408004    .6416186</span>
-<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>          5  |    .230488   .1681636     1.37   0.171    -.0991407    .5601168</span>
-<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>             |</span>
-<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>        b7_a |</span>
-<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>          2  |   .8093763   .0599139    13.51   0.000      .691935    .9268176</span>
-<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>          3  |   1.760688    .067953    25.91   0.000     1.627489    1.893887</span>
-<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>          4  |   2.599717    .198168    13.12   0.000     2.211274    2.988159</span>
-<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>             |</span>
-<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>         gh1 |</span>
-<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>          2  |  -.0257537    .056274    -0.46   0.647    -.1360602    .0845528</span>
-<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>          3  |   .1237127   .0589714     2.10   0.036     .0081189    .2393065</span>
-<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>          4  |   .3784596   .0981945     3.85   0.000      .185982    .5709372</span>
-<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>             |</span>
-<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>   educ_4cat |</span>
-<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>          2  |   .0541308   .1145203     0.47   0.636    -.1703482    .2786097</span>
-<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>          3  |   .1013396   .1091103     0.93   0.353    -.1125348     .315214</span>
-<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>          4  |   .1962778   .1095482     1.79   0.073     -.018455    .4110105</span>
-<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>             |</span>
-<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>      ppethm |</span>
-<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>          2  |   .8605619   .0809846    10.63   0.000     .7018186    1.019305</span>
-<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a>          3  |   .4417021   .1194351     3.70   0.000     .2075893    .6758149</span>
-<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a>          4  |   .2769444   .0710777     3.90   0.000     .1376202    .4162686</span>
-<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>          5  |  -.0936297   .1300828    -0.72   0.472    -.3486138    .1613544</span>
-<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>             |</span>
-<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>       <span class="dt">_cons</span> |  -.7097757   .1389074    -5.11   0.000    -.9820574    -.437494</span>
-<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">svyset</span> caseid [pw=weight_pop]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>Sampling weights: weight_pop</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>             <span class="kw">VCE</span>: <span class="kw">linearized</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>     Single unit: <span class="fu">missing</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>        Strata 1: &lt;one&gt;</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a> Sampling unit 1: caseid</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>           FPC 1: &lt;<span class="bn">zero</span>&gt;</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>. </span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>. <span class="kw">svy</span>: <span class="kw">logit</span> better i.nd2 i.b7_a i.gh1 i.educ_4cat i.ppethm</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>(running <span class="kw">logit</span> <span class="kw">on</span> estimation <span class="kw">sample</span>)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>Survey: Logistic regression</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>Number <span class="kw">of</span> <span class="kw">strata</span> =      1                        Number <span class="kw">of</span> <span class="kw">obs</span>   =      11,667</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>Number <span class="kw">of</span> PSUs   = 11,667                        Population <span class="kw">size</span> = 255,114,223</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>                                                 Design df       =      11,666</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>                                                 <span class="fu">F</span>(17, 11650)    =       55.33</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>                                                 Prob &gt; <span class="fu">F</span>        =      0.0000</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>             |             Linearized</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>      better | Coefficient  <span class="fu">std</span>. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>         nd2 |</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>          2  |   .0617432   .0914704     0.68   0.500     -.117554    .2410404</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>          3  |  -.0055809   .0847456    -0.07   0.947    -.1716965    .1605347</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>          4  |   .2504091   .1995796     1.25   0.210    -.1408004    .6416186</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>          5  |    .230488   .1681636     1.37   0.171    -.0991407    .5601168</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>        b7_a |</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>          2  |   .8093763   .0599139    13.51   0.000      .691935    .9268176</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>          3  |   1.760688    .067953    25.91   0.000     1.627489    1.893887</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>          4  |   2.599717    .198168    13.12   0.000     2.211274    2.988159</span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>         gh1 |</span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>          2  |  -.0257537    .056274    -0.46   0.647    -.1360602    .0845528</span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>          3  |   .1237127   .0589714     2.10   0.036     .0081189    .2393065</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>          4  |   .3784596   .0981945     3.85   0.000      .185982    .5709372</span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>   educ_4cat |</span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a>          2  |   .0541308   .1145203     0.47   0.636    -.1703482    .2786097</span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>          3  |   .1013396   .1091103     0.93   0.353    -.1125348     .315214</span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>          4  |   .1962778   .1095482     1.79   0.073     -.018455    .4110105</span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>      ppethm |</span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>          2  |   .8605619   .0809846    10.63   0.000     .7018186    1.019305</span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>          3  |   .4417021   .1194351     3.70   0.000     .2075893    .6758149</span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a>          4  |   .2769444   .0710777     3.90   0.000     .1376202    .4162686</span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>          5  |  -.0936297   .1300828    -0.72   0.472    -.3486138    .1613544</span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>       <span class="dt">_cons</span> |  -.7097757   .1389074    -5.11   0.000    -.9820574    -.437494</span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To assess whether the respondent’s family is better off, the same, or worse off financially compared to 12 month’s ago can be predicted by thinking that the chance of experiencing a natural disaster or severe weather event will be higher, lower or about the same in 5 years, I run this logistic regression. I treat all variables as categorical given the codebook presents them as such.</p>
 <p>I look at the p-values of nd2, the coefficients for respondents feelings towards disaster/event. Sine they are not statistically significant, I conclude that there is no significant association between respondent attitudes towards financial welfare currently compared to 12 months ago and respondents attitudes about the probability of experiencing a disaster/severe event. Notice that we control for home ownership/rental, and economic feelings, as well as race, and most categories for those controls have some significant association with the dependent variable.</p>
 <section id="g" class="level4">
 <h4 class="anchored" data-anchor-id="g">g</h4>
-<div class="sourceCode" id="cb34"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">save</span> ps4_4.dta, <span class="kw">replace</span> </span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>(file ps4_4.dta <span class="kw">not</span> found)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>file ps4_4.dta saved</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">save</span> ps4_4.dta, <span class="kw">replace</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>(file ps4_4.dta <span class="kw">not</span> found)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>file ps4_4.dta saved</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="h" class="level3">
@@ -3452,7 +3449,7 @@ run;</code></pre>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey); <span class="fu">library</span>(haven)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey); <span class="fu">library</span>(haven)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Loading required package: grid</code></pre>
@@ -3483,18 +3480,18 @@ Attaching package: &#39;survey&#39;</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">&quot;ps4_4.dta&quot;</span>)</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>my_svy <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">id =</span> <span class="sc">~</span> caseid, <span class="at">weight =</span> <span class="sc">~</span> weight_pop, <span class="at">data =</span> dat)</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>my_fit <span class="ot">&lt;-</span> <span class="fu">svyglm</span>(<span class="fu">as.factor</span>(better) <span class="sc">~</span> <span class="fu">as.factor</span>(nd2) <span class="sc">+</span> <span class="fu">as.factor</span>(b7_a) <span class="sc">+</span> <span class="fu">as.factor</span>(gh1) <span class="sc">+</span> <span class="fu">as.factor</span>(educ_4cat) <span class="sc">+</span> <span class="fu">as.factor</span>(ppethm), my_svy, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">&quot;ps4_4.dta&quot;</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>my_svy <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">id =</span> <span class="sc">~</span> caseid, <span class="at">weight =</span> <span class="sc">~</span> weight_pop, <span class="at">data =</span> dat)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>my_fit <span class="ot">&lt;-</span> <span class="fu">svyglm</span>(<span class="fu">as.factor</span>(better) <span class="sc">~</span> <span class="fu">as.factor</span>(nd2) <span class="sc">+</span> <span class="fu">as.factor</span>(b7_a) <span class="sc">+</span> <span class="fu">as.factor</span>(gh1) <span class="sc">+</span> <span class="fu">as.factor</span>(educ_4cat) <span class="sc">+</span> <span class="fu">as.factor</span>(ppethm), my_svy, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in eval(family$initialize): non-integer #successes in a binomial glm!</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">psrsq</span>(my_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">psrsq</span>(my_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1069071</code></pre>

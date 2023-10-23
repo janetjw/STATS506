@@ -27,8 +27,8 @@ Github here:
 I used the CRAN manual to assist with data information: <https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf>.
 
 ```{r}
-#data("flights")
-#data("airports")
+data("flights")
+data("airports")
 
 flights %>%
   rename(faa = origin) %>%      #renaming a variable so i can merge 
@@ -62,7 +62,7 @@ flights %>%
 ```
 
 ### b
-
+I use air time to calculate speed because air time is a more accurate representation of time spent traveling distance than arrival time minus departure time. 
 ```{r}
 fl<-flights %>%
   left_join(planes %>%
@@ -108,7 +108,7 @@ get_temp <- function(month, year, data, celsius = FALSE, average_fn = mean) {
                 ifelse(celsius == FALSE, average_fn(temp), (average_fn(temp) - 32)*5/9 ) ) #if else statement to calculate tmeperature in celsisus if FALSE
     dat$avgtemp # temp printing as vector
   }
-  else(print("Error:date is out of range")) #error message if date is out of range
+  else(paste("Error: date is out of range")) #error message if date is out of range
 }
 ```
 
@@ -129,7 +129,8 @@ get_temp("November", 1999, data =nnmaps, celsius = TRUE,
 
 # 3
 
-SAS RESULTS HERE: <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html>
+SAS RESULTS HERE: <https://htmlpreview.github.io/?https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html>
+<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html>
 
 ### a 
 
@@ -155,18 +156,19 @@ proc freq data = recs order = freq;
 run;
 ```
 
-We see that California has the highest percentage of records. 3.17% of records correspond to Michigan.
+We see that California has the highest percentage of records, with 10.67% of records. 3.17% of records correspond to Michigan.
 
 ### b
+Used this link for how to plot a histogram: <https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html> 
+Used this link for how to restrict to certain values: <https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067>
+
 ```sas
-Used this link for how to plot a histogram: <https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html> Used this link for how to plot certain value: <https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067>
-
-
 proc univariate data=recs noprint;
    where dollarel > 0 ;
     histogram dollarel;
 run;
 ```
+Here is the histogram. 
 
 ### c
 ```sas
@@ -180,6 +182,7 @@ proc univariate data=lrecs noprint;
     histogram logdollarel;
 run;
 ```
+Here is the log histogram.
 
 ### d
 
@@ -208,6 +211,7 @@ proc sgplot data=lrecsout1;
    scatter y=dollarel x=predlog;
 run;
 ```
+This is the scatterplot. 
 
 # Question 4
 
@@ -238,8 +242,8 @@ quit;
 ```
 
 ### c
+Used this link to help me export data: <https://www.listendata.com/2023/07/sas-proc-export-with-examples.html#how_to_export_sas_data_to_csv_file>
 ```sas
-Used this link to help me: <https://www.listendata.com/2023/07/sas-proc-export-with-examples.html#how_to_export_sas_data_to_csv_file>
 
 proc export data=output 
   outfile='~/sasuser.v94/ps4_4.csv' 
