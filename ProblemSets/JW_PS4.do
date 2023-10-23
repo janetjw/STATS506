@@ -17,6 +17,7 @@ svyset caseid [pw=weight_pop]
 
 svy: logit better i.nd2 i.b7_a i.gh1 i.educ_4cat i.ppethm
 
+save ps4_4.dta, replace 
 
 
 

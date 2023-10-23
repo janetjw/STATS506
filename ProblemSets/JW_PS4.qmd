@@ -15,10 +15,7 @@ library(tidyverse)
 library(nycflights13)
 ```
 
-Github here: 
-<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.qmd>
-<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.html>
-
+Github here: <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.qmd> <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4.html>
 
 # Question 1
 
@@ -62,7 +59,9 @@ flights %>%
 ```
 
 ### b
-I use air time to calculate speed because air time is a more accurate representation of time spent traveling distance than arrival time minus departure time. 
+
+I use air time to calculate speed because air time is a more accurate representation of time spent traveling distance than arrival time minus departure time.
+
 ```{r}
 fl<-flights %>%
   left_join(planes %>%
@@ -91,24 +90,31 @@ fl %>%
 
 ```{r}
 nnmaps <- read.csv("chicago-nmmaps.csv")
-
+#' @param month a numeric or string
+#' @param year a numeric
+#' @param data a dataset
+#' @param celsius a logical
+#' @param average_fn a function
 get_temp <- function(month, year, data, celsius = FALSE, average_fn = mean) {
+  if(is.function(average_fn) == FALSE) {
+    stop("Error: not a function") }
+
+      if(is.numeric(month) == FALSE){
+        monthvector <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+        new_month = grep(month, monthvector)
+      }
+      else(new_month = month)
+      new_year = year
+      
+      if(new_year <= max(data$year) & new_year >= min(data$year) & new_month <= 12 & new_month >= 1 ){
+        dat <- data %>%
+        filter(month_numeric == new_month, year == new_year) %>%
+        summarise(avgtemp = 
+                    ifelse(celsius == FALSE, average_fn(temp), (average_fn(temp) - 32)*5/9 ) ) #if else statement to calculate tmeperature in celsisus if FALSE
+        dat$avgtemp # temp printing as vector
+      }
+      else(paste("Error: date is out of range")) #error message if date is out of range
   
-  if(is.numeric(month) == FALSE){
-    monthvector <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
-    new_month = grep(month, monthvector)
-  }
-  else(new_month = month)
-  new_year = year
-  
-  if(new_year <= max(data$year) & new_year >= min(data$year) & new_month <= 12 & new_month >= 1 ){
-    dat <- data %>%
-    filter(month_numeric == new_month, year == new_year) %>%
-    summarise(avgtemp = 
-                ifelse(celsius == FALSE, average_fn(temp), (average_fn(temp) - 32)*5/9 ) ) #if else statement to calculate tmeperature in celsisus if FALSE
-    dat$avgtemp # temp printing as vector
-  }
-  else(paste("Error: date is out of range")) #error message if date is out of range
 }
 ```
 
@@ -129,14 +135,13 @@ get_temp("November", 1999, data =nnmaps, celsius = TRUE,
 
 # 3
 
-SAS RESULTS HERE: <https://htmlpreview.github.io/?https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html>
-<https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html>
+SAS RESULTS HERE: <https://htmlpreview.github.io/?https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html> <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS4-results.html>
 
-### a 
+### a
 
 I used this webpage to help me order the frequency table: <https://online.stat.psu.edu/stat480/lesson/12/12.1#:~:text=PROC%20FREQ%20options%3B%20tables%20..,in%20your%20input%20data%20set>
 
-```sas
+``` sas
 
 
 /* data library for reading/writing data: ---------------------------------- */
@@ -159,19 +164,21 @@ run;
 We see that California has the highest percentage of records, with 10.67% of records. 3.17% of records correspond to Michigan.
 
 ### b
-Used this link for how to plot a histogram: <https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html> 
-Used this link for how to restrict to certain values: <https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067>
 
-```sas
+Used this link for how to plot a histogram: <https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/procstat/procstat_univariate_examples14.html> Used this link for how to restrict to certain values: <https://communities.sas.com/t5/SAS-Procedures/How-to-plot-certain-values-in-SAS/td-p/331067>
+
+``` sas
 proc univariate data=recs noprint;
    where dollarel > 0 ;
     histogram dollarel;
 run;
 ```
-Here is the histogram. 
+
+Here is the histogram.
 
 ### c
-```sas
+
+``` sas
 
 data lrecs;
    set recs;
@@ -182,44 +189,48 @@ proc univariate data=lrecs noprint;
     histogram logdollarel;
 run;
 ```
+
 Here is the log histogram.
 
 ### d
 
 Used this to figure out regression command in SAS: <https://jbhender.github.io/Stats506/F17/Projects/Abalone_WLS.html>
-```sas
+
+``` sas
 
 proc reg data= lrecs;
-	where prkgplc1 >= 0 ;
-	weight nweight;
-	model logdollarel = totrooms prkgplc1;
-	output out=lrecsout pred=pred;
-	run;
+    where prkgplc1 >= 0 ;
+    weight nweight;
+    model logdollarel = totrooms prkgplc1;
+    output out=lrecsout pred=pred;
+    run;
 ```
-
 
 ### e
 
-```sas
+``` sas
 
 data lrecsout1;
    set lrecsout;
    predlog = exp( pred );
 run;
-	
+    
 proc sgplot data=lrecsout1;
    scatter y=dollarel x=predlog;
 run;
 ```
-This is the scatterplot. 
+
+This is the scatterplot.
 
 # Question 4
 
 ### a
+
 It appears the codebook was generated in stata, with the command 'codebook'.
 
 ### b
-```sas
+
+``` sas
 
 /* data library for reading/writing data: ---------------------------------- */
 %let in_path = ~/sasuser.v94 ;
@@ -242,8 +253,10 @@ quit;
 ```
 
 ### c
+
 Used this link to help me export data: <https://www.listendata.com/2023/07/sas-proc-export-with-examples.html#how_to_export_sas_data_to_csv_file>
-```sas
+
+``` sas
 
 proc export data=output 
   outfile='~/sasuser.v94/ps4_4.csv' 
@@ -253,7 +266,8 @@ run;
 ```
 
 ### d
-```stata
+
+``` stata
 . cd "/Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets/"
 /Users/janetjw/Dropbox (University of Michigan)/STATS506/ProblemSets
 
@@ -286,7 +300,8 @@ Sorted by:
 ```
 
 ### e
-```stata
+
+``` stata
 . gen better = 0 
 
 . replace better = 1 if b3 >= 3
@@ -294,7 +309,8 @@ Sorted by:
 ```
 
 ### f
-```stata
+
+``` stata
 . svyset caseid [pw=weight_pop]
 
 Sampling weights: weight_pop
@@ -350,19 +366,23 @@ Number of PSUs   = 11,667                        Population size = 255,114,223
        _cons |  -.7097757   .1389074    -5.11   0.000    -.9820574    -.437494
 ------------------------------------------------------------------------------
 ```
-To assess whether the respondent’s family is better off, the same, or worse off financially compared to 12 month’s ago can be predicted by thinking that the chance of experiencing a natural disaster or severe weather event will be higher, lower or about the same in 5 years, I run this logistic regression. I treat all variables as categorical given the codebook presents them as such. 
 
-I look at the p-values of nd2, the coefficients for respondents feelings towards disaster/event. Sine they are not statistically significant, I conclude that there is no significant association between respondent attitudes towards financial welfare currently compared to 12 months ago and respondents attitudes about the probability of experiencing a disaster/severe event. Notice that we control for home ownership/rental, and economic feelings, as well as race, and most categories for those controls have some significant association with the dependent variable. 
+To assess whether the respondent's family is better off, the same, or worse off financially compared to 12 month's ago can be predicted by thinking that the chance of experiencing a natural disaster or severe weather event will be higher, lower or about the same in 5 years, I run this logistic regression. I treat all variables as categorical given the codebook presents them as such.
+
+I look at the p-values of nd2, the coefficients for respondents feelings towards disaster/event. Sine they are not statistically significant, I conclude that there is no significant association between respondent attitudes towards financial welfare currently compared to 12 months ago and respondents attitudes about the probability of experiencing a disaster/severe event. Notice that we control for home ownership/rental, and economic feelings, as well as race, and most categories for those controls have some significant association with the dependent variable.
 
 #### g
-```stata
+
+``` stata
 . save ps4_4.dta, replace 
 (file ps4_4.dta not found)
 file ps4_4.dta saved
 ```
 
 ### h
+
 This webpage helped me with setting up svyglm: <https://stats.oarc.ucla.edu/r/seminars/survey-data-analysis-with-r/>
+
 ```{r}
 library(survey); library(haven)
 dat <- read_dta("ps4_4.dta")
@@ -373,4 +393,5 @@ my_fit <- svyglm(as.factor(better) ~ as.factor(nd2) + as.factor(b7_a) + as.facto
 
 psrsq(my_fit)
 ```
-I get a pseudo R squared of 0.1069071. 
+
+I get a pseudo R squared of 0.1069071.
