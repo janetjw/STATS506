@@ -12,9 +12,6 @@ editor: visual
 #knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/ProblemSets")
 library(tidyverse)
-library(nycflights13)
-data("flights")
-data("airports")
 ```
 
 Github here: <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS5.qmd> <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS5.html>
@@ -177,21 +174,84 @@ p1 - p2
 Generate a table (which can just be a nicely printed tibble) reporting the mean and median departure delay per airport. Generate a second table (which again can be a nicely printed tibble) reporting the mean and median arrival delay per airport. Exclude any destination with under 10 flights. Do this exclusion through code, not manually.
 
 Additionally,
-
 Order both tables in descending mean delay.
 Both tables should use the airport names not the airport codes.
 Both tables should print all rows.
 
 ```{r}
+library(nycflights13)
+data("flights")
+data("airports")
+library(data.table)
+airports <- data.table(airports)
+flights <- data.table(flights)
+```
+
+```{r}
+flight <- flights[, .(numflights_dest = .N),
+                    key = .(dest)] 
+
+flights <- flights |>
+  merge(x= _, flight,
+        by = "dest", all = TRUE) 
+
+flights <- flights[numflights_dest >= 10, ]
+
+flight <- flights[, .(mean_delay = mean(dep_delay, na.rm = TRUE), 
+                    med_delay = median(dep_delay, na.rm = TRUE),
+                    numflights = .N),
+                    key = .(origin)] 
+flight
+
+data("flights")
+data("airports")
+library(data.table)
+airports <- data.table(airports)
+flights <- data.table(flights)
+
+### arrival 
+flights %>%
+  rename(faa = dest) %>%
+  left_join(airports %>%
+              group_by(faa) %>%
+              summarise(name = toString(name)), by = 'faa') %>%
+  group_by(faa) %>%
+  rename(dest = faa) %>%
+  filter(n() >= 10) %>%
+  ungroup() %>%
+  rename(faa = dest) %>%
+  group_by(name) %>%
+  summarize(mean_delay = mean(arr_delay, na.rm = TRUE),
+            median_delay = median(arr_delay, na.rm = TRUE)) %>%
+  arrange(-mean_delay)
 
 
 ```
-
 ### b
 How many flights did the aircraft model with the fastest average speed take? Produce a tibble with 1 row, and entires for the model, average speed (in MPH) and number of flights.
 
 ```{r}
+fl<-flights %>%
+  left_join(planes %>%
+              group_by(tailnum) %>%
+              summarise(model = toString(model)), by = 'tailnum')
 
+fl <- fl %>%
+  mutate(speed = distance/air_time)
+# fl <- fl |>
+#   merge(x= _, flo,
+#         by = "time_hour", all = TRUE) 
+fl %>%
+  group_by(model) %>%
+  summarise(avgspeed = mean(speed, na.rm = T)*60) %>% 
+  arrange(-avgspeed) %>%
+  head(1)
+
+fl %>%
+  filter(model == "777-222") %>%
+  group_by(model) %>%
+  reframe(avgspeed_mph = mean(speed, na.rm = T)*60,
+          number_of_flights = n())
 ```
 
 
