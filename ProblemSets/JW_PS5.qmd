@@ -1,0 +1,197 @@
+---
+title: "Problem Set 5"
+author: "Janet Wang"
+format: html
+code-fold: true
+code-summary: "Show the code"
+embed-resources: true
+editor: visual
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/ProblemSets")
+library(tidyverse)
+library(nycflights13)
+data("flights")
+data("airports")
+```
+
+Github here: <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS5.qmd> <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS5.html>
+
+# Question 1
+
+### a
+```{r}
+theme_set(theme_bw()) #making the background of the plot white for better contrast
+nnmaps <- read.csv("chicago-nmmaps.csv")
+
+nnmaps <- nnmaps %>% #creating the monthly temperature in Celsisus variable 
+  group_by(month) %>%
+  mutate(monthly_temp = mean((temp-32)*5/9))
+
+
+nnmaps <- nnmaps %>% #creating the season variable
+  mutate(season = case_when(
+            (month == "Mar"| month =="Jan"|month == "Feb") ~ "Winter",
+            (month =="Jun"|month == "Apr"|month =="May") ~ "Spring",
+            (month =="Sep"|month == "Jul"|month =="Aug") ~ "Summer",
+            (month == "Dec"|month =="Oct"|month == "Nov") ~ "Fall"))
+
+nnmaps$month <- factor(nnmaps$month, levels=c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")) #releveling month to begin with December
+
+ggplot(nnmaps, aes(x=month, y=monthly_temp, color = season, group = season)) + 
+  geom_point() + 
+  geom_line() +
+  labs(title = "Monthly temp in Chicago - NNMAPS data") +
+  xlab("Month") +
+  ylab("Temp (in celsisus)")
+
+```
+### b
+
+I used this websit to get code for different types of lines: <http://www.sthda.com/english/wiki/line-types-in-r-lty#:~:text=line%20type%20(lty)%20can%20be,is%20identical%20to%20lty%3D1>
+```{r}
+nnmaps <- nnmaps %>% #creating the monthly O3,PM10,dewpoint
+  group_by(month) %>%
+  mutate(monthly_o3 = mean(o3),
+         monthly_pm10 = mean(pm10, na.rm = TRUE),
+         monthly_dewpoint = mean(dewpoint))
+
+ggplot(nnmaps, aes(x = month_numeric, color = season, group = season)) + 
+  geom_line(aes(y=monthly_temp, lty = "solid")) + 
+  geom_line(aes(y=monthly_o3, lty = "dotted")) + 
+  geom_line(aes(y=monthly_pm10, lty = "longdash")) + 
+  geom_line(aes(y=monthly_dewpoint, lty = "twodash")) + 
+  labs(title = "Monthly measurements in Chicago - NNMAPS data") +
+  xlab("Month")+
+  ylab("Monthly measurements")+
+  scale_x_discrete(limits = unique(nnmaps$month))+
+  scale_linetype_manual(name = "measurement",
+                        values = c("solid" = "solid", 
+                                   "dotted" = "dotted",
+                                   "longdash" = "longdash",
+                                   "twodash" = "twodash"),
+                        labels = c("temp", "o3", "pm10", "dew point"))
+```
+Based on this graph, I would say that O3 has the least amount of seasonality since it varies the least across and within seasons (slope doesn't rise and fall with seasonality as much as the other measurements).
+
+
+# Question 2
+### a
+```{r}
+#' @param data vector of numerics for coefficients for the polynomial expression
+make_poly <- setClass("Poly", 
+  slots = c(data = "numeric")
+)
+
+#creating the validator (checkign to see if data is a numeric vector of coefs)
+setValidity("Poly", function(object) {
+  if (is.numeric(object@data) != T | is.vector(object@data) != T) {
+    stop("Invalid vector of coefficients! Please enter a numeric vector of coefficients for your polynomial!")
+  }
+  return(TRUE)
+})
+
+#creating show to display the polynomial expression
+setMethod("show", "Poly",
+          function(object) {
+              output <- NULL
+              for(i in 0:length(object@data))
+                {
+                 output[i] = paste(object@data[i], "x^", 
+                                   length(object@data)-i,
+                                   sep= "")
+                }
+              return((cat(output)))
+          })
+
+#set the method for addition
+setMethod("+", signature(e1 = "Poly",
+                         e2 = "Poly"),
+          function(e1, e2) {
+                        if(length(e1@data) == length(e2@data))
+                        {
+                          new_data = e1@data - e2@data
+                        }
+                       else {
+                         newdata <- NULL
+                         for(i in 1:((length(e2@data)-length(e1@data)) )){
+                           newdata[i]=e2@data[i]
+                         }
+                         newdata[(i+1):length(e2@data)] <- e1@data + e2@data[(i+1):length(e2@data)]
+                         new_data = newdata
+                         }
+            out <- new("Poly", data = new_data)
+
+            validObject(out)
+            return(out)
+          })
+#set the method for subtraction
+setMethod("-", signature(e1 = "Poly",
+                         e2 = "Poly"),
+          function(e1, e2) {
+                        if(length(e1@data) == length(e2@data))
+                        {
+                          new_data = e1@data - e2@data
+                        }
+                       else {
+                         newdata <- NULL
+                         for(i in 1:((length(e2@data)-length(e1@data)) )){
+                           newdata[i]=e2@data[i]
+                         }
+                         newdata[(i+1):length(e2@data)] <- e1@data - e2@data[(i+1):length(e2@data)]
+                         new_data = newdata
+                         }
+            out <- new("Poly", data = new_data)
+
+            validObject(out)
+            return(out)
+          })
+```
+### b
+```{r}
+p1 <- make_poly(data = c(3, 0, 2))
+p2 <- make_poly(data = c(9, -2, -1, 17))
+```
+
+```{r}
+p1
+```
+
+```{r}
+p2
+```
+
+```{r}
+p1 + p2
+```
+
+```{r}
+p1 - p2
+```
+
+# Question 3
+
+### a
+Generate a table (which can just be a nicely printed tibble) reporting the mean and median departure delay per airport. Generate a second table (which again can be a nicely printed tibble) reporting the mean and median arrival delay per airport. Exclude any destination with under 10 flights. Do this exclusion through code, not manually.
+
+Additionally,
+
+Order both tables in descending mean delay.
+Both tables should use the airport names not the airport codes.
+Both tables should print all rows.
+
+```{r}
+
+
+```
+
+### b
+How many flights did the aircraft model with the fastest average speed take? Produce a tibble with 1 row, and entires for the model, average speed (in MPH) and number of flights.
+
+```{r}
+
+```
+
+
