@@ -1,0 +1,28 @@
+---
+title: "STAT 506 - Final Project Appendix"
+author: "Janet Wang"
+format: html
+editor: visual
+---
+
+#### Code, Figures 
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```

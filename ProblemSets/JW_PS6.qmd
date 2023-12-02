@@ -2,26 +2,155 @@
 title: "Problem Set 6"
 author: "Janet Wang"
 format: html
+code-fold: true
+code-summary: "Show the code"
+embed-resources: true
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Dropbox (University of Michigan)/STATS506/ProblemSets")
+library(tidyverse)
+library(nycflights13)
 ```
 
-You can add options to executable code like this
+Github here: <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS6.qmd> <https://github.com/janetjw/STATS506/blob/main/ProblemSets/JW_PS6.html>
 
+A way around this is to carry out stratified bootstrap: Instead of taking a sample with replacement of the whole sample, take separate samples with replacement within each strata of the same size of the strata, then combine those resamples to generate the bootstrap sample.
+
+Use the flights data from the nycflights13 package. Use stratified bootstrapping by dests to estimate the average air_time for flights within each origin and produce a table including the estimates and confidence intervals for each origin.
+
+
+I used this link to learn how to bind list rows: <https://dplyr.tidyverse.org/reference/bind.html>
+
+# Without parallel processing
 ```{r}
-#| echo: false
-2 * 2
+rm(list = ls())
+data(flights)
+set.seed(121667)
+
+timepoint1 <- Sys.time()
+
+boot <- function() {
+  
+    boot_dest <- list()  #creating empty list for each unique destination of each replication 
+
+    for(j in 1:length(unique(flights$dest))){  
+    flights_dest <- flights[which(flights$dest == unique(flights$dest)[j]),]  #creating datasubset with only the unique destination 
+    boot_dest[[j]] <- flights_dest[sample(1:nrow(flights_dest), nrow(flights_dest), replace = TRUE), ] #sampling with replacement from that data subset with the number of times that unique dest shows up in the subset 
+  }
+
+  bootdata <- boot_dest %>% bind_rows() #each full bootstrap sample is row-bound and stored in list
+  bootdata_stat <- vector()
+  bootdata_stat <- c(mean(bootdata$air_time[which(bootdata$origin == "EWR")], na.rm = TRUE), #calculating mean air time for flights from EWR
+                     mean(bootdata$air_time[which(bootdata$origin == "LGA")], na.rm = TRUE), #calculating mean air time for flights from LGA
+                     mean(bootdata$air_time[which(bootdata$origin == "JFK")], na.rm = TRUE))  #calculating mean air time for flights from JFK
+  
+  return(bootdata_stat)
+  
+}
+
+reps <- 1000
+estimatelist <- lapply(seq_len(reps), function(x) boot()) #using lapply to apply boot function to 1000 reps
+estimatedf <- data.frame(reps=1:reps)
+estimatedf$estimate1 <- as.vector(unlist(lapply(estimatelist,function(x) x[length(x)-2]))) #using lapply to get estimates of air time for flights from EWR
+estimatedf$estimate2 <- as.vector(unlist(lapply(estimatelist,function(x) x[length(x)-1]))) #using lapply to get estimates of air time for flights from LGA
+estimatedf$estimate3 <- as.vector(unlist(lapply(estimatelist,function(x) x[length(x)]))) #using lapply to get estimates of air time for flights from JFK
+
+outputtable <- flights %>% #creating output table with original theta hat (means of air time)
+  group_by(origin) %>%
+  summarize(mean <- mean(air_time, na.rm = TRUE)
+            ) %>% data.frame()
+
+outputtable <- as.data.frame(t(outputtable[,2]))
+  names(outputtable)[1] <- "EWR_estimate"
+  names(outputtable)[2] <- "LGA_estimate"
+  names(outputtable)[3] <- "JFK_estimate"
+  
+  estcoef <- outputtable$EWR_estimate; estsd <- sd(estimatedf$estimate1, na.rm = T)  #calculating standard deviation
+  outputtable$EWR_lowCI <- estcoef - 1.96*estsd #calculating lower bound of CI
+  outputtable$EWR_highCI <- estcoef + 1.96*estsd #calculating upper bound of CI
+
+  estcoef <- outputtable$LGA_estimate; estsd <- sd(estimatedf$estimate2, na.rm = T)
+  outputtable$LGA_lowCI <- estcoef - 1.96*estsd
+  outputtable$LGA_highCI <- estcoef + 1.96*estsd
+  
+  estcoef <- outputtable$JFK_estimate; estsd <- sd(estimatedf$estimate3, na.rm = T)
+  outputtable$JFK_lowCI <- estcoef - 1.96*estsd
+  outputtable$JFK_highCI <- estcoef + 1.96*estsd
+  
+  outputtable   
+    
+timepoint2 <- Sys.time()
+timepoint2 - timepoint1
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+
+# With parallel processing 
+
+Point is to speed up the process -- I use mcapply() from the 'parallel' package instead of using lapply. The other parts of code remain similar. 
+
+```{r}
+library(parallel)
+
+rm(list = ls())
+data(flights)
+set.seed(121667)
+timepoint3 <- Sys.time()
+
+boot <- function() {
+  
+    boot_dest <- list()  #creating empty list for each unique destination of each replication 
+
+    for(j in 1:length(unique(flights$dest))){  
+    flights_dest <- flights[which(flights$dest == unique(flights$dest)[j]),]
+    boot_dest[[j]] <- flights_dest[sample(1:nrow(flights_dest), nrow(flights_dest), replace = TRUE), ]
+  }
+
+  bootdata <- boot_dest %>% bind_rows()
+  bootdata_stat <- vector()
+  bootdata_stat <- c(mean(bootdata$air_time[which(bootdata$origin == "EWR")], na.rm = TRUE),
+                     mean(bootdata$air_time[which(bootdata$origin == "LGA")], na.rm = TRUE),
+                     mean(bootdata$air_time[which(bootdata$origin == "JFK")], na.rm = TRUE))
+  
+  return(bootdata_stat)
+  
+}
+
+reps <- 1000
+estimatelist <- mclapply(seq_len(reps), function(x) boot())
+estimatedf <- data.frame(reps=1:reps)
+estimatedf$estimate1 <- as.vector(unlist(mclapply(estimatelist,function(x) x[length(x)-2])))
+estimatedf$estimate2 <- as.vector(unlist(mclapply(estimatelist,function(x) x[length(x)-1])))
+estimatedf$estimate3 <- as.vector(unlist(mclapply(estimatelist,function(x) x[length(x)])))
+
+outputtable <- flights %>% 
+  group_by(origin) %>%
+  summarize(mean <- mean(air_time, na.rm = TRUE)
+            ) %>% data.frame()
+
+outputtable <- as.data.frame(t(outputtable[,2]))
+  names(outputtable)[1] <- "EWR_estimate"
+  names(outputtable)[2] <- "LGA_estimate"
+  names(outputtable)[3] <- "JFK_estimate"
+  
+  estcoef <- outputtable$EWR_estimate; estsd <- sd(estimatedf$estimate1, na.rm = T)
+  outputtable$EWR_lowCI <- estcoef - 1.96*estsd
+  outputtable$EWR_highCI <- estcoef + 1.96*estsd
+
+  estcoef <- outputtable$LGA_estimate; estsd <- sd(estimatedf$estimate2, na.rm = T)
+  outputtable$LGA_lowCI <- estcoef - 1.96*estsd
+  outputtable$LGA_highCI <- estcoef + 1.96*estsd
+  
+  estcoef <- outputtable$JFK_estimate; estsd <- sd(estimatedf$estimate3, na.rm = T)
+  outputtable$JFK_lowCI <- estcoef - 1.96*estsd
+  outputtable$JFK_highCI <- estcoef + 1.96*estsd
+  
+  outputtable   
+  
+timepoint4 <- Sys.time()
+timepoint4 - timepoint3
+
+```
+We see that the non-parallelized version of code took 29.58988 mins to run, whereas the parallelized version of code took 17.44813 min to run. Thus, the parallelized version is faster to run. 
