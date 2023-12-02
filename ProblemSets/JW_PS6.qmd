@@ -153,4 +153,4 @@ timepoint4 <- Sys.time()
 timepoint4 - timepoint3
 
 ```
-We see that the non-parallelized version of code took 29.58988 mins to run, whereas the parallelized version of code took 17.44813 min to run. Thus, the parallelized version is faster to run. 
+We see that the non-parallelized version of code took more mins to run, whereas the parallelized version of code took fewer min to run. Thus, the parallelized version is faster to run. 
