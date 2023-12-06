@@ -1,0 +1,485 @@
+------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/janetjw/Dropbox (University of Michigan)/STATS506/Project/02_analysis.log
+  log type:  text
+ opened on:   5 Dec 2023, 22:34:39
+
+. use STATS506/Project/clean_hrs.dta ;
+
+. fvset base 2 rmainocc ;
+
+. fvset base 2 myeduc ;
+
+. fvset base 1 raracem ;
+
+. fvset base 1 ragender ;
+
+. fvset base 1 mypeduc ;
+
+. fvset base 1 rlbrfsimp ;
+
+. fvset base 1 rmainocc ;
+
+. replace age = age - 50 ;
+(140,164 real changes made)
+
+.  count if personweight == . ;
+  47,328
+
+. svyset raehsamp [weight=personweight], strata(raestrat) ;
+(sampling weights assumed)
+
+Sampling weights: personweight
+             VCE: linearized
+     Single unit: missing
+        Strata 1: raestrat
+ Sampling unit 1: raehsamp
+           FPC 1: <zero>
+
+. stset year, failure(cogimp) id(rahhidpn);
+
+Survival-time data settings
+
+           ID variable: rahhidpn
+         Failure event: cogimp!=0 & cogimp<.
+Observed time interval: (year[_n-1], year]
+     Exit on or before: failure
+
+--------------------------------------------------------------------------
+    140,164  total observations
+     18,797  observations begin on or after (first) failure
+--------------------------------------------------------------------------
+    121,367  observations remaining, representing
+     25,959  subjects
+      8,022  failures in single-failure-per-subject data
+   52242118  total analysis time at risk and under observation
+                                                At risk from t =         0
+                                     Earliest observed entry t =         0
+                                          Last observed exit t =     2,018
+
+. sts graph, na ;
+
+        Failure _d: cogimp
+  Analysis time _t: year
+       ID variable: rahhidpn
+
+.  disp `testing assumptions' ;
+
+
+. stcox c.age i.rmainocc i.myeduc i.raracem i.ragender i.mypeduc i.poorhealth i.rsmokev i.rlbrfsimp , tvc(ag
+> e poorhealth rsmokev rlbrfsimp) ;
+
+        Failure _d: cogimp
+  Analysis time _t: year
+       ID variable: rahhidpn
+
+Iteration 0:  Log likelihood = -78678.932
+Iteration 1:  Log likelihood = -74858.034
+Iteration 2:  Log likelihood = -74261.693
+Iteration 3:  Log likelihood = -74258.981
+Iteration 4:  Log likelihood = -74258.981
+Refining estimates:
+Iteration 0:  Log likelihood = -74258.981
+
+Cox regression with Breslow method for ties
+
+No. of subjects =     25,959                           Number of obs = 121,367
+No. of failures =      8,022
+Time at risk    = 52,242,118
+                                                       LR chi2(25)   = 8839.90
+Log likelihood = -74258.981                            Prob > chi2   =  0.0000
+
+-----------------------------------------------------------------------------------------------------------
+                                       _t | Haz. ratio   Std. err.      z    P>|z|     [95% conf. interval]
+------------------------------------------+----------------------------------------------------------------
+main                                      |
+                                      age |   1509.848   682.2698    16.20   0.000     622.7195    3660.783
+                                          |
+                                 rmainocc |
+Farming/forestry/fishing, mechanics/re..  |    1.31357   .0700133     5.12   0.000     1.183271    1.458217
+   Managerial and professional specialty  |   .9937194   .0543833    -0.12   0.908     .8926475    1.106235
+                               Operators  |   1.381882   .0703937     6.35   0.000     1.250577    1.526974
+                           Other/unknown  |   .8690475   .0362389    -3.37   0.001     .8008456    .9430577
+Professional specialty, technical supp..  |   .9678703    .054263    -0.58   0.560     .8671518    1.080287
+                                   Sales  |   1.021275   .0585636     0.37   0.714     .9127075    1.142756
+                                 Service  |   1.376705   .0678018     6.49   0.000     1.250028    1.516219
+                                          |
+                                   myeduc |
+                                       1  |   1.493266     .04509    13.28   0.000     1.407455    1.584308
+                                       3  |   .8062003   .0249575    -6.96   0.000     .7587389    .8566306
+                                       4  |   .5893825   .0238345   -13.07   0.000     .5444712    .6379985
+                                          |
+                                  raracem |
+                                       2  |   1.933561     .05886    21.66   0.000     1.821571    2.052435
+                                       3  |   1.323286   .0510373     7.26   0.000     1.226942    1.427195
+                                          |
+                                 ragender |
+                                       2  |   .9933392   .0256321    -0.26   0.796     .9443504    1.044869
+                                          |
+                                  mypeduc |
+                                       2  |   .8354067   .0250672    -5.99   0.000     .7876927     .886011
+                                       3  |    .756778      .0393    -5.37   0.000     .6835417    .8378609
+                                       4  |   .7259357   .0370811    -6.27   0.000     .6567778    .8023758
+                                          |
+                             1.poorhealth |   1.69e-06   .0000155    -1.45   0.146     2.84e-14    100.9411
+                                1.rsmokev |   .0474082   .4316239    -0.33   0.738     8.44e-10     2664044
+                                          |
+                                rlbrfsimp |
+                          in labor force  |   81200.16   584769.9     1.57   0.116     .0601944    1.10e+11
+                                 retired  |   1.40e+10   2.02e+11     1.62   0.105      .007583    2.58e+22
+------------------------------------------+----------------------------------------------------------------
+tvc                                       |
+                                      age |    .996397   .0002242   -16.04   0.000     .9959578    .9968365
+                               poorhealth |   1.006819   .0045774     1.49   0.135     .9978874    1.015831
+                                  rsmokev |   1.001573   .0045384     0.35   0.729     .9927173    1.010508
+                                rlbrfsimp |   .9941559   .0035677    -1.63   0.102      .987188    1.001173
+-----------------------------------------------------------------------------------------------------------
+Note: Variables in tvc equation interacted with _t.
+
+. quietly stcox c.age i.rmainocc i.myeduc i.raracem i.ragender i.mypeduc i.poorhealth i.rsmokev i.rlbrfsimp,
+>  schoenfeld(sch*) scaledsch(sca*) ;
+
+. stphtest, detail;
+
+Test of proportional-hazards assumption
+
+Time function: Analysis time
+--------------------------------------------------------
+             |        rho     chi2       df    Prob>chi2
+-------------+------------------------------------------
+         age |   -0.09245    67.49        1       0.0000
+ 1b.rmainocc |          .        .        1           .
+  2.rmainocc |   -0.02406     4.65        1       0.0311
+  3.rmainocc |    0.00343     0.09        1       0.7599
+  4.rmainocc |   -0.05095    20.98        1       0.0000
+  5.rmainocc |    0.06539    35.46        1       0.0000
+  6.rmainocc |   -0.01047     0.88        1       0.3477
+  7.rmainocc |   -0.02711     5.92        1       0.0150
+  8.rmainocc |   -0.02473     4.92        1       0.0265
+    1.myeduc |   -0.01444     1.72        1       0.1903
+   2b.myeduc |          .        .        1           .
+    3.myeduc |   -0.00460     0.17        1       0.6792
+    4.myeduc |   -0.01495     1.84        1       0.1753
+  1b.raracem |          .        .        1           .
+   2.raracem |    0.04915    19.03        1       0.0000
+   3.raracem |    0.01446     1.71        1       0.1912
+ 1b.ragender |          .        .        1           .
+  2.ragender |   -0.03518     9.91        1       0.0016
+  1b.mypeduc |          .        .        1           .
+   2.mypeduc |    0.01883     2.93        1       0.0870
+   3.mypeduc |    0.01914     2.96        1       0.0855
+   4.mypeduc |    0.00961     0.77        1       0.3794
+0b.poorhea~h |          .        .        1           .
+1.poorhealth |    0.01821     2.74        1       0.0978
+  0b.rsmokev |          .        .        1           .
+   1.rsmokev |    0.00414     0.14        1       0.7116
+1b.rlbrfsimp |          .        .        1           .
+ 2.rlbrfsimp |    0.04389    15.16        1       0.0001
+ 3.rlbrfsimp |    0.02185     3.88        1       0.0489
+-------------+------------------------------------------
+ Global test |              601.00       21       0.0000
+--------------------------------------------------------
+
+. stphtest, plot(age) msym(oh);
+
+. disp `final model' ;
+
+
+. svy: stcox c.age i.rmainocc i.myeduc i.raracem i.ragender i.mypeduc i.poorhealth i.rsmokev i.rlbrfsimp ;
+(running stcox on estimation sample)
+
+Survey: Cox regression
+
+Number of strata =  52                           Number of obs   =      92,836
+Number of PSUs   = 104                           Population size = 328,507,740
+                                                 Subpop. no. obs =      73,348
+                                                 Subpop. size    = 280,091,717
+                                                 Design df       =          52
+                                                 F(21, 32)       =      148.85
+                                                 Prob > F        =      0.0000
+
+-----------------------------------------------------------------------------------------------------------
+                                          |             Linearized
+                                       _t | Haz. ratio   std. err.      t    P>|t|     [95% conf. interval]
+------------------------------------------+----------------------------------------------------------------
+                                      age |   1.059914   .0024948    24.72   0.000      1.05492    1.064932
+                                          |
+                                 rmainocc |
+Farming/forestry/fishing, mechanics/re..  |   1.197011   .0623848     3.45   0.001      1.07815    1.328975
+   Managerial and professional specialty  |   .9198596   .0589176    -1.30   0.198     .8089153     1.04602
+                               Operators  |   1.287879   .0921363     3.54   0.001     1.115652    1.486694
+                           Other/unknown  |   1.153984   .0672134     2.46   0.017     1.026694    1.297055
+Professional specialty, technical supp..  |   .8523785   .0520998    -2.61   0.012     .7539897    .9636063
+                                   Sales  |   .9937803   .0707843    -0.09   0.931      .861425    1.146472
+                                 Service  |   1.300619   .0797934     4.28   0.000     1.149966     1.47101
+                                          |
+                                   myeduc |
+                                       1  |   1.551426   .0679169    10.03   0.000     1.420955    1.693876
+                                       3  |   .8828906   .0339958    -3.23   0.002     .8172419    .9538129
+                                       4  |   .6797567   .0339995    -7.72   0.000     .6148437     .751523
+                                          |
+                                  raracem |
+                                       2  |   1.916295    .095914    12.99   0.000      1.73318    2.118758
+                                       3  |   1.322923   .0790397     4.68   0.000     1.173457    1.491427
+                                          |
+                                 ragender |
+                                       2  |   .9231496    .035773    -2.06   0.044     .8540857    .9977981
+                                          |
+                                  mypeduc |
+                                       2  |   .8683601   .0350853    -3.49   0.001     .8007347    .9416968
+                                       3  |   .8408718   .0620927    -2.35   0.023     .7250655    .9751745
+                                       4  |   .7634508   .0509554    -4.04   0.000     .6677527    .8728637
+                                          |
+                             1.poorhealth |   1.554582    .057436    11.94   0.000     1.443497    1.674216
+                                1.rsmokev |   1.076803   .0326259     2.44   0.018     1.013284    1.144303
+                                          |
+                                rlbrfsimp |
+                          in labor force  |   .6455648    .042171    -6.70   0.000     .5662541     .735984
+                                 retired  |   .8408726   .0395675    -3.68   0.001      .765108    .9241399
+-----------------------------------------------------------------------------------------------------------
+
+. outreg2 using STATS506/Project/stcox_results, excel replace ctitle(cox model results) dec(3) pdec(3) alpha
+> (0.001, 0.01, 0.05) eform ;
+STATS506/Project/stcox_results.xml
+dir : seeout
+
+. disp `postestimation' ;
+
+
+. /*
+> margins i.rmainocc, at(age=(0 5 10 15 20 25 30 35 40)) ;
+> mplotoffset,  title("Predicted hazard ratios by main occupation", size(medium)) 
+> xtitle(Age) xlab(0 "50" 5 "55" 10 "60" 15 "65" 20 "70" 25 "75" 30 "80" 35 "85" 40 "90", angle(45))
+> ytitle(Predicted Hazard Ratios) ylabel(1 3 5 7 9 11 13 15) ysize(10) xsize(16) legend(position(6) size(sma
+> ll)) ; 
+> graph export STATS506/Project/marginsplot.png,replace ;
+> */
+> 
+> putdocx clear;
+
+. putdocx begin ;
+
+. contrast  rmainocc ;
+
+Contrasts of marginal linear predictions
+
+                                                                Design df = 52
+
+Margins: asbalanced
+
+------------------------------------------------
+             |         df           F        P>F
+-------------+----------------------------------
+    rmainocc |          7       16.87     0.0000
+      Design |         52
+------------------------------------------------
+Note: F statistics are adjusted for the survey
+      design.
+
+. pwcompare rmainocc, effects ;
+
+Pairwise comparisons of marginal linear predictions
+
+                                                                Design df = 52
+
+Margins: asbalanced
+
+-----------------------------------------------------------------------------------------------------------
+                                          |                            Unadjusted           Unadjusted
+                                          |   Contrast   Std. err.      t    P>|t|     [95% conf. interval]
+------------------------------------------+----------------------------------------------------------------
+                                 rmainocc |
+Farming/forestry/fishing, mechanics/re..  |
+                                      vs  |
+         Administrative/clerical support  |   .1798274   .0521171     3.45   0.001     .0752468    .2844081
+   Managerial and professional specialty  |
+                                      vs  |
+         Administrative/clerical support  |  -.0835342   .0640506    -1.30   0.198    -.2120611    .0449927
+                               Operators  |
+                                      vs  |
+         Administrative/clerical support  |    .252997   .0715411     3.54   0.001     .1094393    .3965547
+                           Other/unknown  |
+                                      vs  |
+         Administrative/clerical support  |     .14322   .0582447     2.46   0.017     .0263435    .2600966
+Professional specialty, technical supp..  |
+                                      vs  |
+         Administrative/clerical support  |  -.1597245   .0611229    -2.61   0.012    -.2823766   -.0370725
+Sales vs Administrative/clerical support  |  -.0062391   .0712274    -0.09   0.931    -.1491672    .1366891
+                                 Service  |
+                                      vs  |
+         Administrative/clerical support  |   .2628406   .0613503     4.28   0.000     .1397322     .385949
+   Managerial and professional specialty  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |  -.2633616   .0623689    -4.22   0.000     -.388514   -.1382092
+                               Operators  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |   .0731695   .0659446     1.11   0.272     -.059158    .2054971
+                           Other/unknown  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |  -.0366074   .0538001    -0.68   0.499    -.1445652    .0713504
+Professional specialty, technical supp..  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |   -.339552   .0658797    -5.15   0.000    -.4717492   -.2073547
+                                   Sales  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |  -.1860665   .0693425    -2.68   0.010    -.3252124   -.0469206
+                                 Service  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |   .0830132   .0583004     1.42   0.160    -.0339752    .2000015
+                               Operators  |
+                                      vs  |
+   Managerial and professional specialty  |   .3365311   .0563261     5.97   0.000     .2235045    .4495577
+                           Other/unknown  |
+                                      vs  |
+   Managerial and professional specialty  |   .2267542   .0627536     3.61   0.001     .1008299    .3526785
+Professional specialty, technical supp..  |
+                                      vs  |
+   Managerial and professional specialty  |  -.0761904   .0738995    -1.03   0.307    -.2244806    .0720998
+                                   Sales  |
+                                      vs  |
+   Managerial and professional specialty  |   .0772951   .0732005     1.06   0.296    -.0695924    .2241826
+                                 Service  |
+                                      vs  |
+   Managerial and professional specialty  |   .3463748   .0721667     4.80   0.000     .2015617    .4911878
+              Other/unknown vs Operators  |  -.1097769   .0674902    -1.63   0.110    -.2452059    .0256521
+Professional specialty, technical supp..  |
+                                      vs  |
+                               Operators  |  -.4127215   .0699177    -5.90   0.000    -.5530216   -.2724214
+                      Sales vs Operators  |   -.259236   .0617661    -4.20   0.000    -.3831788   -.1352932
+                    Service vs Operators  |   .0098436   .0703269     0.14   0.889    -.1312775    .1509648
+Professional specialty, technical supp..  |
+                                      vs  |
+                           Other/unknown  |  -.3029446    .069202    -4.38   0.000    -.4418087   -.1640805
+                  Sales vs Other/unknown  |  -.1494591   .0581427    -2.57   0.013     -.266131   -.0327873
+                Service vs Other/unknown  |   .1196205   .0550403     2.17   0.034     .0091741     .230067
+                                   Sales  |
+                                      vs  |
+Professional specialty, technical supp..  |   .1534855   .0732708     2.09   0.041     .0064568    .3005141
+                                 Service  |
+                                      vs  |
+Professional specialty, technical supp..  |   .4225651   .0520169     8.12   0.000     .3181857    .5269446
+                        Service vs Sales  |   .2690797   .0655356     4.11   0.000     .1375728    .4005865
+-----------------------------------------------------------------------------------------------------------
+
+. putdocx table pairwise = etable ;
+
+. putdocx save STATS506/Project/pwdiffs.docx , replace ;
+successfully replaced "/Users/janetjw/Dropbox (University of Michigan)/STATS506/Project/pwdiffs.docx"
+
+. pwcompare rmainocc, effects ;
+
+Pairwise comparisons of marginal linear predictions
+
+                                                                Design df = 52
+
+Margins: asbalanced
+
+-----------------------------------------------------------------------------------------------------------
+                                          |                            Unadjusted           Unadjusted
+                                          |   Contrast   Std. err.      t    P>|t|     [95% conf. interval]
+------------------------------------------+----------------------------------------------------------------
+                                 rmainocc |
+Farming/forestry/fishing, mechanics/re..  |
+                                      vs  |
+         Administrative/clerical support  |   .1798274   .0521171     3.45   0.001     .0752468    .2844081
+   Managerial and professional specialty  |
+                                      vs  |
+         Administrative/clerical support  |  -.0835342   .0640506    -1.30   0.198    -.2120611    .0449927
+                               Operators  |
+                                      vs  |
+         Administrative/clerical support  |    .252997   .0715411     3.54   0.001     .1094393    .3965547
+                           Other/unknown  |
+                                      vs  |
+         Administrative/clerical support  |     .14322   .0582447     2.46   0.017     .0263435    .2600966
+Professional specialty, technical supp..  |
+                                      vs  |
+         Administrative/clerical support  |  -.1597245   .0611229    -2.61   0.012    -.2823766   -.0370725
+Sales vs Administrative/clerical support  |  -.0062391   .0712274    -0.09   0.931    -.1491672    .1366891
+                                 Service  |
+                                      vs  |
+         Administrative/clerical support  |   .2628406   .0613503     4.28   0.000     .1397322     .385949
+   Managerial and professional specialty  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |  -.2633616   .0623689    -4.22   0.000     -.388514   -.1382092
+                               Operators  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |   .0731695   .0659446     1.11   0.272     -.059158    .2054971
+                           Other/unknown  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |  -.0366074   .0538001    -0.68   0.499    -.1445652    .0713504
+Professional specialty, technical supp..  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |   -.339552   .0658797    -5.15   0.000    -.4717492   -.2073547
+                                   Sales  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |  -.1860665   .0693425    -2.68   0.010    -.3252124   -.0469206
+                                 Service  |
+                                      vs  |
+Farming/forestry/fishing, mechanics/re..  |   .0830132   .0583004     1.42   0.160    -.0339752    .2000015
+                               Operators  |
+                                      vs  |
+   Managerial and professional specialty  |   .3365311   .0563261     5.97   0.000     .2235045    .4495577
+                           Other/unknown  |
+                                      vs  |
+   Managerial and professional specialty  |   .2267542   .0627536     3.61   0.001     .1008299    .3526785
+Professional specialty, technical supp..  |
+                                      vs  |
+   Managerial and professional specialty  |  -.0761904   .0738995    -1.03   0.307    -.2244806    .0720998
+                                   Sales  |
+                                      vs  |
+   Managerial and professional specialty  |   .0772951   .0732005     1.06   0.296    -.0695924    .2241826
+                                 Service  |
+                                      vs  |
+   Managerial and professional specialty  |   .3463748   .0721667     4.80   0.000     .2015617    .4911878
+              Other/unknown vs Operators  |  -.1097769   .0674902    -1.63   0.110    -.2452059    .0256521
+Professional specialty, technical supp..  |
+                                      vs  |
+                               Operators  |  -.4127215   .0699177    -5.90   0.000    -.5530216   -.2724214
+                      Sales vs Operators  |   -.259236   .0617661    -4.20   0.000    -.3831788   -.1352932
+                    Service vs Operators  |   .0098436   .0703269     0.14   0.889    -.1312775    .1509648
+Professional specialty, technical supp..  |
+                                      vs  |
+                           Other/unknown  |  -.3029446    .069202    -4.38   0.000    -.4418087   -.1640805
+                  Sales vs Other/unknown  |  -.1494591   .0581427    -2.57   0.013     -.266131   -.0327873
+                Service vs Other/unknown  |   .1196205   .0550403     2.17   0.034     .0091741     .230067
+                                   Sales  |
+                                      vs  |
+Professional specialty, technical supp..  |   .1534855   .0732708     2.09   0.041     .0064568    .3005141
+                                 Service  |
+                                      vs  |
+Professional specialty, technical supp..  |   .4225651   .0520169     8.12   0.000     .3181857    .5269446
+                        Service vs Sales  |   .2690797   .0655356     4.11   0.000     .1375728    .4005865
+-----------------------------------------------------------------------------------------------------------
+
+. matrix pw = r(table_vs)' ;
+
+. svmat pw ;
+
+. generate hr = exp(pw1);
+(140,136 missing values generated)
+
+.  // hazard ratio
+> generate lb = exp(pw5);
+(140,136 missing values generated)
+
+.  // Lower bound of 95% CI
+> generate ub = exp(pw6);
+(140,136 missing values generated)
+
+.  // Upper bound of 95% CI
+> list pw1 pw5 pw6 hr lb ub in 1/3;
+
+     +-------------------------------------------------------------------+
+     |       pw1         pw5        pw6         hr         lb         ub |
+     |-------------------------------------------------------------------|
+  1. |  .1798274    .0752468   .2844081   1.197011    1.07815   1.328975 |
+  2. | -.0835342   -.2120611   .0449927   .9198596   .8089153    1.04602 |
+  3. |   .252997    .1094393   .3965546   1.287879   1.115652   1.486694 |
+     +-------------------------------------------------------------------+
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/janetjw/Dropbox (University of Michigan)/STATS506/Project/02_analysis.log
+  log type:  text
+ closed on:   5 Dec 2023, 22:36:06
+------------------------------------------------------------------------------------------------------------

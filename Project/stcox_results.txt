@@ -1,0 +1,51 @@
+	(1)
+VARIABLES	cox model results
+	
+_t	.
+	(.)
+age	1.060***
+	(0.002)
+2.rmainocc	1.197**
+	(0.062)
+3.rmainocc	0.920
+	(0.059)
+4.rmainocc	1.288***
+	(0.092)
+5.rmainocc	1.154*
+	(0.067)
+6.rmainocc	0.852*
+	(0.052)
+7.rmainocc	0.994
+	(0.071)
+8.rmainocc	1.301***
+	(0.080)
+1.myeduc	1.551***
+	(0.068)
+3.myeduc	0.883**
+	(0.034)
+4.myeduc	0.680***
+	(0.034)
+2.raracem	1.916***
+	(0.096)
+3.raracem	1.323***
+	(0.079)
+2.ragender	0.923*
+	(0.036)
+2.mypeduc	0.868***
+	(0.035)
+3.mypeduc	0.841*
+	(0.062)
+4.mypeduc	0.763***
+	(0.051)
+1.poorhealth	1.555***
+	(0.057)
+1.rsmokev	1.077*
+	(0.033)
+2.rlbrfsimp	0.646***
+	(0.042)
+3.rlbrfsimp	0.841***
+	(0.040)
+	
+Observations	92,836
+seEform in parentheses	
+*** p<0.001, ** p<0.01, * p<0.05	
