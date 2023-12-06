@@ -42,14 +42,6 @@ outreg2 using STATS506/Project/stcox_results, excel replace ctitle(cox model res
 
 disp `postestimation' ;
 
-/*
-margins i.rmainocc, at(age=(0 5 10 15 20 25 30 35 40)) ;
-mplotoffset,  title("Predicted hazard ratios by main occupation", size(medium)) 
-xtitle(Age) xlab(0 "50" 5 "55" 10 "60" 15 "65" 20 "70" 25 "75" 30 "80" 35 "85" 40 "90", angle(45))
-ytitle(Predicted Hazard Ratios) ylabel(1 3 5 7 9 11 13 15) ysize(10) xsize(16) legend(position(6) size(small)) ; 
-graph export STATS506/Project/marginsplot.png,replace ;
-*/
-
 putdocx clear;
 putdocx begin ;
 contrast  rmainocc ;

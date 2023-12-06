@@ -1,18 +1,17 @@
-------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
       name:  <unnamed>
        log:  /Users/janetjw/Dropbox (University of Michigan)/STATS506/Project/00_reducestats.log
   log type:  text
- opened on:   5 Dec 2023, 13:37:03
+ opened on:   5 Dec 2023, 23:29:21
 
 . use Research/PubPap/00_data/data_clean/randhrs1992_2018v2_STATA/randhrs1992_2018v2.dta ;
 
 . /* dropping variables that aren't important and most spousal ones */
 > 
-> keep *hhidpn *hhid *cohbyr *awtsamp *aestrat *aehsamp *wthh *wtresp *iwbeg *byear *mstat *agey
-> _* *gender *racem *hispan *cpl *edyrs *edegrm *educ *mstat *mrct *mnev *mwid *mdiv *mend *shlt
->  *hltc *hhresp *jcpen *peninc *ptyp1 *sayret *retwsp *work *samemp *lbrf *inlbrf *retemp *jcte
-> n *jcocc *jcind *union *jlten *jloccc *jlocca *jloccb *jlocc *imrc *dlrc *ser7 *bwc20 *smokev 
-> *feduc *meduc *itot;
+> keep *hhidpn *hhid *cohbyr *awtsamp *aestrat *aehsamp *wthh *wtresp *iwbeg *byear *mstat *agey_* *gender *
+> racem *hispan *cpl *edyrs *edegrm *educ *mstat *mrct *mnev *mwid *mdiv *mend *shlt *hltc *hhresp *jcpen *p
+> eninc *ptyp1 *sayret *retwsp *work *samemp *lbrf *inlbrf *retemp *jcten *jcocc *jcind *union *jlten *jlocc
+> c *jlocca *jloccb *jlocc *imrc *dlrc *ser7 *bwc20 *smokev *feduc *meduc *itot;
 
 . /* 
 > 
@@ -49,5 +48,5 @@ file STATS506/Project/randhrs1992_2018_reduced_edited_stat.dta saved
       name:  <unnamed>
        log:  /Users/janetjw/Dropbox (University of Michigan)/STATS506/Project/00_reducestats.log
   log type:  text
- closed on:   5 Dec 2023, 13:37:07
-------------------------------------------------------------------------------------------------
+ closed on:   5 Dec 2023, 23:29:26
+------------------------------------------------------------------------------------------------------------

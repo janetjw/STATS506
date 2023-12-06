@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Users/janetjw/Dropbox (University of Michigan)/STATS506/Project/02_analysis.log
   log type:  text
- opened on:   5 Dec 2023, 22:34:39
+ opened on:   5 Dec 2023, 23:30:11
 
 . use STATS506/Project/clean_hrs.dta ;
 
@@ -246,16 +246,7 @@ dir : seeout
 . disp `postestimation' ;
 
 
-. /*
-> margins i.rmainocc, at(age=(0 5 10 15 20 25 30 35 40)) ;
-> mplotoffset,  title("Predicted hazard ratios by main occupation", size(medium)) 
-> xtitle(Age) xlab(0 "50" 5 "55" 10 "60" 15 "65" 20 "70" 25 "75" 30 "80" 35 "85" 40 "90", angle(45))
-> ytitle(Predicted Hazard Ratios) ylabel(1 3 5 7 9 11 13 15) ysize(10) xsize(16) legend(position(6) size(sma
-> ll)) ; 
-> graph export STATS506/Project/marginsplot.png,replace ;
-> */
-> 
-> putdocx clear;
+. putdocx clear;
 
 . putdocx begin ;
 
@@ -481,5 +472,5 @@ Professional specialty, technical supp..  |   .4225651   .0520169     8.12   0.0
       name:  <unnamed>
        log:  /Users/janetjw/Dropbox (University of Michigan)/STATS506/Project/02_analysis.log
   log type:  text
- closed on:   5 Dec 2023, 22:36:06
+ closed on:   5 Dec 2023, 23:31:39
 ------------------------------------------------------------------------------------------------------------
